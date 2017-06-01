@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
-MySQLConnection::MySQLConnection(const char *host, const char *user, const char *passwd, 
-                                 const char *database, short port, uint32_t param_buffer_size, uint32_t result_buffer_size)
+MySQLConnection::MySQLConnection(const char *host, short port, const char *user, const char *passwd, 
+                                 const char *database, uint32_t param_buffer_size, uint32_t result_buffer_size)
 : Connection(host, user, passwd, database, port),
   connected_(false),
   host_(host),
@@ -49,8 +49,14 @@ bool MySQLConnection::Connect(const char *charset, unsigned int timeout, bool au
     mysql_options(&mysql_, MYSQL_OPT_READ_TIMEOUT, &timeout);
     mysql_options(&mysql_, MYSQL_OPT_WRITE_TIMEOUT, &timeout);
         
-    if (mysql_real_connect(&mysql_, host_.c_str(), user_.c_str(), passwd_.c_str(), db_.c_str(), port_, 
-                           NULL, CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS) != NULL)
+    if (mysql_real_connect(&mysql_, 
+                           host_.c_str(), 
+                           user_.c_str(), 
+                           passwd_.c_str(), 
+                           db_.c_str(), 
+                           port_, 
+                           NULL, CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS) 
+            != NULL)
     {
         connected_ = true;
         mysql_autocommit(&mysql_, auto_commit_);

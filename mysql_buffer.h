@@ -5,6 +5,8 @@
 #include <vector>
 #include <string.h>
 
+const uint32_t kDefaultBufferSize = 10 * 1024;
+
 class MySQLBuffer
 {
 public:
