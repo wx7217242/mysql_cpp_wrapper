@@ -28,7 +28,11 @@ MySQLResultSet::MySQLResultSet(MySQLStatement *stmt) :
 
 MySQLResultSet::~MySQLResultSet() 
 {
-    mysql_free_result(mysql_res_);
+    if (mysql_res_ != NULL)
+    {
+        mysql_free_result(mysql_res_);
+        mysql_res_ = NULL;
+    }
 }
 
 bool MySQLResultSet::Next()
@@ -42,6 +46,11 @@ bool MySQLResultSet::Next()
         assert(fields_length_ != NULL);
     }
     return has_next;
+}
+
+bool MySQLResultSet::Init()
+{
+    return StoreResults();
 }
 
 const Statement* MySQLResultSet::GetStatement() const

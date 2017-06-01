@@ -9,7 +9,7 @@ class PreparedStatement;
 class Connection
 {
 public:
-          Connection(const char* host, const char* user, const char* passwd, const char* database, short port) {}
+          Connection(const char* host, short port, const char* user, const char* passwd, const char* database) {}
           virtual ~Connection() {}
           
           virtual bool Connect(const char* charset, unsigned int timeout, bool auto_commit) = 0;
@@ -41,7 +41,7 @@ public:
 private:
           /* Prevent use of these */
           Connection(const Connection &);
-          void operator=(Connection &);
+          Connection& operator=(Connection &);
 };
 
 #endif

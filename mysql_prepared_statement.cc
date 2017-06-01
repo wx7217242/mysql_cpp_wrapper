@@ -91,6 +91,14 @@ ResultSet *MySQLPreparedStatement::ExecuteQuery()
     {
         Execute();
         resultset_ = new MySQLPreparedResultSet(this);
+        if (resultset_)
+        {
+            if (!resultset_->Init())
+            {
+                delete resultset_;
+                resultset_ = NULL;
+            }
+        }
         return resultset_; 
     }
     catch(MySQLException& e)

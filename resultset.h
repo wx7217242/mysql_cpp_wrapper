@@ -13,6 +13,8 @@ public:
     
     virtual bool Next() = 0;
     
+    virtual bool Init() = 0;
+    
     virtual const Statement* GetStatement() const = 0;
     
     virtual uint32_t GetBlob(uint32_t idx, char* buffer, uint32_t max_buf_len)  const = 0;

@@ -21,8 +21,8 @@ public:
     virtual bool Execute(const std::string& sql) ;
     virtual bool Execute() ;
     
-    virtual ResultSet * ExecuteQuery(const std::string& sql) ;
-    virtual ResultSet * ExecuteQuery() ;
+    virtual ResultSet* ExecuteQuery(const std::string& sql) ;
+    virtual ResultSet* ExecuteQuery() ;
     
     virtual int ExecuteUpdate(const std::string& sql) ;
     virtual int ExecuteUpdate() ;

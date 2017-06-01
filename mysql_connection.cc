@@ -10,8 +10,8 @@
 #include <assert.h>
 
 MySQLConnection::MySQLConnection(const char *host, short port, const char *user, const char *passwd, 
-                                 const char *database, uint32_t param_buffer_size, uint32_t result_buffer_size)
-: Connection(host, user, passwd, database, port),
+                                 const char *database, uint32_t param_buf_size, uint32_t result_buf_size)
+: Connection(host, port, user, passwd, database),
   connected_(false),
   host_(host),
   user_(user),
@@ -21,8 +21,8 @@ MySQLConnection::MySQLConnection(const char *host, short port, const char *user,
   ping_counter_(0),
   timeout_(15),
   auto_commit_(true),
-  param_buffer_(param_buffer_size),
-  result_buffer_(result_buffer_size)
+  param_buffer_(param_buf_size),
+  result_buffer_(result_buf_size)
 {
     if (mysql_init(&mysql_) == NULL)
     {

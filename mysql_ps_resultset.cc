@@ -92,6 +92,11 @@ bool MySQLPreparedResultSet::Next()
     return has_result;
 }
 
+bool MySQLPreparedResultSet::Init()
+{
+    return BindResults();
+}
+
 const Statement *MySQLPreparedResultSet::GetStatement() const
 {
     return stmt_;

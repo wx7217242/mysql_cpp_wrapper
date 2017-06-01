@@ -33,7 +33,7 @@ public:
     virtual bool Reconnect();
     virtual bool IsConnected();
     
-    virtual Statement*CreateStatement();
+    virtual Statement* CreateStatement();
     virtual PreparedStatement* PrepareStatement(const std::string& sql);
     
     virtual void SetAutoCommit(bool auto_commit);

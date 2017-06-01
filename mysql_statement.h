@@ -19,7 +19,7 @@ public:
 //      virtual void Close() = 0;
     
     virtual bool Execute(const std::string& sql);
-    virtual ResultSet * ExecuteQuery(const std::string& sql);
+    virtual ResultSet* ExecuteQuery(const std::string& sql);
     virtual ResultSet* GetResultSet();
     virtual int ExecuteUpdate(const std::string& sql);
     virtual bool GetMoreResults();
