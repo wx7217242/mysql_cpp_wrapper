@@ -49,14 +49,14 @@ const Statement* MySQLResultSet::GetStatement() const
     return stmt_;
 }
 
-uint32_t MySQLResultSet::GetBlob(uint32_t col_index, char* buffer, uint32_t max_buf_len) const
+uint32_t MySQLResultSet::GetBlob(uint32_t idx, char* buffer, uint32_t max_buf_len) const
 {
-    if (col_index < field_count_)
+    if (idx < field_count_ && cur_row_[idx] != NULL)
     {
-        uint32_t field_length = static_cast<uint32_t>(fields_length_[col_index]);
+        uint32_t field_length = static_cast<uint32_t>(fields_length_[idx]);
         if ( field_length <= max_buf_len)
         {
-            memcpy(buffer, cur_row_[col_index], field_length);
+            memcpy(buffer, cur_row_[idx], field_length);
             return field_length;
         }
         else
@@ -67,69 +67,79 @@ uint32_t MySQLResultSet::GetBlob(uint32_t col_index, char* buffer, uint32_t max_
     return 0;
 }
 
-bool MySQLResultSet::GetBoolean(uint32_t col_index, bool default_val) const
+bool MySQLResultSet::GetBoolean(uint32_t idx, bool def) const
 {
-    if (col_index < field_count_)
+    if (idx < field_count_ && cur_row_[idx] != NULL)
     {
-        int value = atoi(cur_row_[col_index]);
+        int value = atoi(cur_row_[idx]);
         return value == 1;
     }
-    return default_val;
+    return def;
 }
 
-double MySQLResultSet::GetDouble(uint32_t col_index, double default_val) const
+double MySQLResultSet::GetDouble(uint32_t idx, double def) const
 {
-    if (col_index < field_count_)
+    if (idx < field_count_ && cur_row_[idx] != NULL)
     {
-        return *reinterpret_cast<double*>(cur_row_[col_index]);
+        double res = def;
+        sscanf(cur_row_[idx], "%lf", &res);
+        return res;
     }
-    return default_val;
+    return def;
 }
 
-int32_t MySQLResultSet::GetInt(uint32_t col_index, int32_t default_val) const
+int32_t MySQLResultSet::GetInt(uint32_t idx, int32_t def) const
 {
-    if (col_index < field_count_)
+    if (idx < field_count_ && cur_row_[idx] != NULL)
     {
-        return *reinterpret_cast<int32_t*>(cur_row_[col_index]);
+        int32_t res = def;
+        sscanf(cur_row_[idx], "%d", &res);
+        return res;
     }
-    return default_val;
+    return def;
 }
 
-uint32_t MySQLResultSet::GetUInt(uint32_t col_index, uint32_t default_val) const
+uint32_t MySQLResultSet::GetUInt(uint32_t idx, uint32_t def) const
 {
-    if (col_index < field_count_)
+    if (idx < field_count_ && cur_row_[idx] != NULL)
     {
-        return *reinterpret_cast<uint32_t*>(cur_row_[col_index]);
+        uint32_t res = def;
+        sscanf(cur_row_[idx], "%ud", &res);
+        return res;
     }
-    return default_val;
+    return def;
 }
 
-int64_t MySQLResultSet::GetInt64(uint32_t col_index, int64_t default_val) const
+int64_t MySQLResultSet::GetInt64(uint32_t idx, int64_t def) const
 {
-    if (col_index < field_count_)
+    if (idx < field_count_ && cur_row_[idx] != NULL)
     {
-        return *reinterpret_cast<int64_t*>(cur_row_[col_index]);
+        int64_t res = def;
+        sscanf(cur_row_[idx], "%ld", &res);
+        return res;
     }
-    return default_val;
+    return def;
 }
 
-uint64_t MySQLResultSet::GetUInt64(uint32_t col_index, uint64_t default_val) const
+uint64_t MySQLResultSet::GetUInt64(uint32_t idx, uint64_t def) const
 {
-    if (col_index < field_count_)
+    if (idx < field_count_ && cur_row_[idx] != NULL)
     {
-        return *reinterpret_cast<uint64_t*>(cur_row_[col_index]);
+        uint64_t res = def;
+        sscanf(cur_row_[idx], "%lu", &res);
+        return res;
     }
-    return default_val;
+    return def;
 }
 
-uint32_t MySQLResultSet::GetString(uint32_t col_index, char* buffer, uint32_t max_buf_len) const
+uint32_t MySQLResultSet::GetString(uint32_t idx, char* buffer, uint32_t max_buf_len) const
 {
-    if (col_index < field_count_)
+    if (idx < field_count_ && cur_row_[idx] != NULL)
     {
-        uint32_t field_length = static_cast<uint32_t>(fields_length_[col_index]);
+        uint32_t field_length = static_cast<uint32_t>(fields_length_[idx]);
         if ( field_length <= max_buf_len)
         {
-            memcpy(buffer, cur_row_[col_index], field_length);
+            memcpy(buffer, cur_row_[idx], field_length);
             return field_length;
         }
         else
@@ -140,7 +150,7 @@ uint32_t MySQLResultSet::GetString(uint32_t col_index, char* buffer, uint32_t ma
     return 0;
 }
 
-bool MySQLResultSet::IsNull(uint32_t col_index) const
+bool MySQLResultSet::IsNull(uint32_t idx) const
 {
     return false;
 }
@@ -156,6 +166,11 @@ bool MySQLResultSet::StoreResults()
         return false;
     
     mysql_res_ = mysql_store_result(mysql_handler);
+    if (mysql_res_ == NULL)
+    {
+        return false;
+    }
+    
     rows_ = mysql_num_rows(mysql_res_);
     
     mysql_fields = mysql_fetch_fields(mysql_res_);
