@@ -142,10 +142,7 @@ void MySQLConnection::Commit()
     }
 }
 
-bool MySQLConnection::GetAutoCommit()
-{
-    return auto_commit_;
-}
+
 
 void MySQLConnection::Close()
 {
@@ -155,29 +152,4 @@ void MySQLConnection::Close()
         mysql_close(&mysql_);
         connected_ = false;
     }
-}
-
-int MySQLConnection::GetErrNo()
-{
-    return mysql_errno(&mysql_);
-}
-
-const char *MySQLConnection::GetError()
-{
-    return mysql_error(&mysql_);
-}
-
-MYSQL *MySQLConnection::GetMySQLHandler()
-{
-    return &mysql_;
-}
-
-MySQLBuffer *MySQLConnection::param_buffer()
-{
-    return &param_buffer_;
-}
-
-MySQLBuffer *MySQLConnection::result_buffer()
-{
-    return &result_buffer_;
 }

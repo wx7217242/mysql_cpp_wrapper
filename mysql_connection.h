@@ -6,27 +6,19 @@
 #include <vector>
 #include <mysql/mysql.h>
 
-class MySQLStatement;
-class MySQLResultSet;
-class MySQLPreparedStatement;
-class MySQLPreparedResultSet;
-
-
+class Statement;
+class PreparedStatement;
 
 class MySQLConnection : public Connection
 {
-    friend class MySQLStatement;
-    friend class MySQLResultSet;
-    friend class MySQLPreparedStatement;
-    friend class MySQLPreparedResultSet;
 public:
     MySQLConnection(const char* host, 
                     short port, 
                     const char* user, 
                     const char* passwd, 
                     const char* database, 
-                    uint32_t param_buffer_size = kDefaultBufferSize, 
-                    uint32_t result_buffer_size = kDefaultBufferSize);
+                    uint32_t param_buf_size = kDefaultBufferSize, 
+                    uint32_t result_buf_size = kDefaultBufferSize);
     virtual ~MySQLConnection();
     
     virtual bool Connect(const char* charset, unsigned int timeout, bool auto_commit);
@@ -38,18 +30,20 @@ public:
     
     virtual void SetAutoCommit(bool auto_commit);
     virtual void Commit();
-    virtual bool GetAutoCommit();
+    
+    virtual bool GetAutoCommit() { return auto_commit_; }
     
     virtual void Close();
     
-    virtual int GetErrNo();
-    virtual const char* GetError();
+    virtual int GetErrNo() { return mysql_errno(&mysql_); }
     
-    MYSQL* GetMySQLHandler();
+    virtual const char* GetError() { return mysql_error(&mysql_); }
     
-    MySQLBuffer* param_buffer() ;
+    MYSQL* GetMySQLHandler() { return &mysql_; }
     
-    MySQLBuffer* result_buffer() ;
+    MySQLBuffer* param_buffer() { return &param_buffer_; }
+    
+    MySQLBuffer* result_buffer() { return &result_buffer_; }
     
     
 private:
