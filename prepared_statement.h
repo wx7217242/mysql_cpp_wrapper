@@ -13,8 +13,8 @@ public:
       virtual bool Execute(const std::string& sql) = 0;
       virtual bool Execute() = 0;
       
-      virtual ResultSet * ExecuteQuery(const std::string& sql) = 0;
-      virtual ResultSet * ExecuteQuery() = 0;
+      virtual ResultSet* ExecuteQuery(const std::string& sql) = 0;
+      virtual ResultSet* ExecuteQuery() = 0;
       
       virtual int ExecuteUpdate(const std::string& sql) = 0;
       virtual int ExecuteUpdate() = 0;

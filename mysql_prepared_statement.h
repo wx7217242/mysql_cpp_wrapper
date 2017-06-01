@@ -14,6 +14,8 @@ public:
     MySQLPreparedStatement(MySQLConnection* conn, const std::string& sql) ;
     virtual ~MySQLPreparedStatement() ;
     
+    virtual bool Init();
+    
     virtual Connection* GetConnection() ;
     
     virtual ResultSet* GetResultSet() ;

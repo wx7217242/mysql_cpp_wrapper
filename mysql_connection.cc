@@ -97,7 +97,16 @@ Statement *MySQLConnection::CreateStatement()
         fprintf(stderr, "not connected!\n");
         return NULL;
     }
-    return new MySQLStatement(this);
+    Statement * stmt = new MySQLStatement(this);
+    if (stmt != NULL)
+    {
+        if (!stmt->Init())
+        {
+            delete stmt;
+            stmt = NULL;
+        }
+    }
+    return stmt;
 }
 
 PreparedStatement *MySQLConnection::PrepareStatement(const std::string &sql)
@@ -107,7 +116,16 @@ PreparedStatement *MySQLConnection::PrepareStatement(const std::string &sql)
         fprintf(stderr, "not connected!\n");
         return NULL;
     }
-    return new MySQLPreparedStatement(this, sql); 
+    PreparedStatement* stmt = new MySQLPreparedStatement(this, sql);  
+    if (stmt != NULL)
+    {
+        if (!stmt->Init())
+        {
+            delete stmt;
+            stmt = NULL;
+        }
+    }
+    return stmt;
 }
 
 void MySQLConnection::SetAutoCommit(bool auto_commit)

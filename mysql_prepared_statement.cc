@@ -16,8 +16,19 @@ MySQLPreparedStatement::MySQLPreparedStatement(MySQLConnection *conn, const std:
     affected_rows_(0)
 {
     assert(conn != NULL && sql.size() > 0);
-    
-    param_buffer_ = conn->param_buffer();
+}
+
+MySQLPreparedStatement::~MySQLPreparedStatement()
+{
+    if (mysql_stmt_ != NULL)
+    {
+        mysql_stmt_close(mysql_stmt_);
+    }
+}
+
+bool MySQLPreparedStatement::Init()
+{
+    param_buffer_ = connection_->param_buffer();
     assert(param_buffer_ != NULL);
     
     param_buffer_->ResetBuffer();
@@ -26,22 +37,19 @@ MySQLPreparedStatement::MySQLPreparedStatement(MySQLConnection *conn, const std:
     mysql_stmt_ = mysql_stmt_init(connection_->GetMySQLHandler());
     if (mysql_stmt_ == NULL)
     {
-        throw MySQLException(GetError());
+        return false;
+//        throw MySQLException(GetError());
     }    
     
-    if (mysql_stmt_prepare(mysql_stmt_, sql.c_str(), sql.length()) != 0)
+    if (mysql_stmt_prepare(mysql_stmt_, sql_.c_str(), sql_.length()) != 0)
     {
-        throw MySQLException(GetError());
+        return false;
+//        throw MySQLException(GetError());
     }
     
     param_count_ = mysql_stmt_param_count(mysql_stmt_);
     params_.resize(param_count_);
-}
-
-MySQLPreparedStatement::~MySQLPreparedStatement()
-{
-    if (mysql_stmt_ != NULL)
-        mysql_stmt_close(mysql_stmt_);
+    return true;
 }
 
 Connection *MySQLPreparedStatement::GetConnection()
