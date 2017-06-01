@@ -16,9 +16,9 @@
 #include <iostream>
 using namespace std;
 
-const char* host = "127.0.0.1";
+const char* host = "192.168.223.129";
 const char* user = "root";
-const char* passwd = "";
+const char* passwd = "root";
 const char* database = "generic_game";
 short port = 3306;
 
@@ -46,7 +46,7 @@ void statement_resultset_test()
     {
         do
         {
-            conn  = new MySQLConnection(host, user, passwd, database, port);
+            conn  = new MySQLConnection(host, port, user, passwd, database);
             if (!conn->Connect("utf8", 15, false))
             {
                 printf("Connect error!\n");
@@ -152,7 +152,7 @@ void preparedstatement_resultset_test()
     {
         do
         {
-            conn  = new MySQLConnection(host, user, passwd, database, port);
+            conn  = new MySQLConnection(host, port, user, passwd, database);
             if (!conn->Connect("utf8", 15, true))
             {
                 printf("Connect error!\n");
