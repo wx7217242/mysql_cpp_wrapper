@@ -48,7 +48,7 @@ public:
     virtual bool SetString(uint32_t idx, const char* value) ;
     
     virtual bool SetDateTime(uint32_t idx, const char* value) ;
-
+    
     virtual bool SetNull(uint32_t idx, int sql_type) ;    
     
     int GetErrNo();
