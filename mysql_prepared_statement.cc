@@ -123,8 +123,7 @@ bool MySQLPreparedStatement::GetMoreResults()
 
 bool MySQLPreparedStatement::SetBoolean(uint32_t param_idx, bool value)
 {
-    char val = (value ? '1' : '0');
-    return SetParamToBuffer(param_idx, MYSQL_TYPE_TINY, &val, sizeof(val), false);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_TINY, &value, sizeof(value), false);
 }
 
 bool MySQLPreparedStatement::SetInt(uint32_t param_idx, int32_t value)

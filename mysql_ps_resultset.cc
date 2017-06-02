@@ -66,6 +66,7 @@ bool MySQLPreparedResultSet::Next()
     {
     case 0:
         has_result = true;
+        printf("cur buf size:%ld\n", result_buffer_->buffer_cur_pos());
         break;
     case 1:
         fprintf(stderr, "%s\n", stmt_->GetError());
@@ -89,7 +90,7 @@ const Statement *MySQLPreparedResultSet::GetStatement() const
 
 uint32_t MySQLPreparedResultSet::GetBlob(uint32_t col_index, char *buffer, uint32_t max_buf_len) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         uint32_t buffer_length = static_cast<uint32_t>(fields_length_[col_index]); //data.buffer_length
         const MYSQL_BIND& data = results_[col_index];
@@ -109,7 +110,7 @@ uint32_t MySQLPreparedResultSet::GetBlob(uint32_t col_index, char *buffer, uint3
 
 bool MySQLPreparedResultSet::GetBoolean(uint32_t col_index, bool default_val) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         const MYSQL_BIND& data = results_[col_index];
         char* buffer = reinterpret_cast<char*>(data.buffer);
@@ -120,7 +121,7 @@ bool MySQLPreparedResultSet::GetBoolean(uint32_t col_index, bool default_val) co
 
 double MySQLPreparedResultSet::GetDouble(uint32_t col_index, double default_val) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         const MYSQL_BIND& data = results_[col_index];
         return *reinterpret_cast<double*>(data.buffer);
@@ -130,7 +131,7 @@ double MySQLPreparedResultSet::GetDouble(uint32_t col_index, double default_val)
 
 int32_t MySQLPreparedResultSet::GetInt(uint32_t col_index, int32_t default_val) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         const MYSQL_BIND& data = results_[col_index];
         return *reinterpret_cast<int32_t*>(data.buffer);
@@ -140,7 +141,7 @@ int32_t MySQLPreparedResultSet::GetInt(uint32_t col_index, int32_t default_val) 
 
 uint32_t MySQLPreparedResultSet::GetUInt(uint32_t col_index, uint32_t default_val) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         const MYSQL_BIND& data = results_[col_index];
         return *reinterpret_cast<uint32_t*>(data.buffer);
@@ -150,7 +151,7 @@ uint32_t MySQLPreparedResultSet::GetUInt(uint32_t col_index, uint32_t default_va
 
 int64_t MySQLPreparedResultSet::GetInt64(uint32_t col_index, int64_t default_val) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         const MYSQL_BIND& data = results_[col_index];
         return *reinterpret_cast<int64_t*>(data.buffer);
@@ -160,7 +161,7 @@ int64_t MySQLPreparedResultSet::GetInt64(uint32_t col_index, int64_t default_val
 
 uint64_t MySQLPreparedResultSet::GetUInt64(uint32_t col_index, uint64_t default_val) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         const MYSQL_BIND& data = results_[col_index];
         return *reinterpret_cast<uint64_t*>(data.buffer);
@@ -170,7 +171,7 @@ uint64_t MySQLPreparedResultSet::GetUInt64(uint32_t col_index, uint64_t default_
 
 uint32_t MySQLPreparedResultSet::GetString(uint32_t col_index, char *buffer, uint32_t max_buf_len) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         uint32_t buffer_length = static_cast<uint32_t>(fields_length_[col_index]); //data.buffer_length
         const MYSQL_BIND& data = results_[col_index];
@@ -190,7 +191,7 @@ uint32_t MySQLPreparedResultSet::GetString(uint32_t col_index, char *buffer, uin
 
 std::string MySQLPreparedResultSet::GetString(uint32_t col_index) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         uint32_t buffer_length = static_cast<uint32_t>(fields_length_[col_index]); //data.buffer_length
         const MYSQL_BIND& data = results_[col_index];
@@ -201,7 +202,7 @@ std::string MySQLPreparedResultSet::GetString(uint32_t col_index) const
 
 bool MySQLPreparedResultSet::IsNull(uint32_t col_index) const
 {
-    if (col_index >= 0 && col_index < field_count_)
+    if (col_index < field_count_)
     {
         const MYSQL_BIND& data = results_[col_index];
         if (data.is_null)
@@ -243,17 +244,25 @@ bool MySQLPreparedResultSet::BindResults()
         
         switch (mysql_fields[i].type)
         {
-        case MYSQL_TYPE_LONGLONG: // long
+        case MYSQL_TYPE_LONGLONG: // long long
         {
             data.buffer_length = sizeof(long long);
+        }break;
+        case MYSQL_TYPE_DOUBLE:
+        {
+            data.buffer_length = sizeof(double);
+        }break;
+        case MYSQL_TYPE_FLOAT: // float
+        {
+            data.buffer_length = sizeof(float);
         }break;
         case MYSQL_TYPE_LONG: // int
         {
             data.buffer_length = sizeof(int);
         }break;
-        case MYSQL_TYPE_FLOAT: // float
+        case MYSQL_TYPE_TINY:
         {
-            data.buffer_length = sizeof(float);
+            data.buffer_length = mysql_fields[i].length;
         }break;
         case MYSQL_TYPE_VAR_STRING:
         case MYSQL_TYPE_STRING:
@@ -268,19 +277,9 @@ bool MySQLPreparedResultSet::BindResults()
         {
             data.buffer_length = sizeof(MYSQL_TIME);
         }break;
-        case MYSQL_TYPE_TINY:
-        {
-            data.buffer_length = mysql_fields[i].length;
-        }break;
-        case MYSQL_TYPE_DOUBLE:
-        {
-            data.buffer_length = sizeof(double);
-        }break;
         default:
         {
             data.buffer_length = mysql_fields[i].length;
-            fprintf(stderr, "other mysql type: %d\n", mysql_fields[i].type);
-//            return false;
         }break;
         }
         
@@ -301,7 +300,7 @@ bool MySQLPreparedResultSet::BindResults()
     int status = MySQLStmtBindResult(stmt_, this);
     if (status == 0)
     {
-        //            has_result = Next(); // TODO
+        // has_result = Next(); // TODO
         return true;
     }
     else
@@ -310,8 +309,6 @@ bool MySQLPreparedResultSet::BindResults()
         return false;
     }
 }
-
-
 
 bool MySQLPreparedResultSet::Init()
 {
