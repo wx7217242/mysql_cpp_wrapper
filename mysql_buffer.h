@@ -1,7 +1,7 @@
 #ifndef MYSQL_BUFFER_H_
 #define MYSQL_BUFFER_H_
 
-#include <stdint.h>
+#include "types.h"
 #include <vector>
 
 const int kDefaultParamBufferSize = 10 * 1024;

@@ -1,8 +1,9 @@
 #ifndef RESULTSET_H_
 #define RESULTSET_H_
 
+#include "types.h"
 #include <istream>
-#include <stdint.h>
+
 
 class Statement;
 

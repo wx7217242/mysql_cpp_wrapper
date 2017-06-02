@@ -2,7 +2,7 @@
 #define PREPARED_STATEMENT_H_
 
 #include "statement.h"
-#include <stdint.h>
+#include "types.h"
 
 class PreparedStatement : public Statement
 {
