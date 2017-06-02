@@ -236,7 +236,17 @@ void preparedstatement_resultset_test()
                 std::cout << "ext : " << buffer << "\t, length is " << ext_len << std::endl;
             }
             
-            delete stmt; stmt= NULL;
+            if (resultset != NULL)
+            {
+//                delete resultset; 
+//                resultset= NULL;
+            }
+            
+//            if (stmt != NULL)
+//            {
+//                delete stmt; 
+//                stmt= NULL;
+//            }
             sql = "update mysql_test set id = ?";
             stmt = conn->PrepareStatement(sql);
             if (stmt == NULL)
@@ -286,7 +296,7 @@ void preparedstatement_resultset_test()
 
 int main()
 {
-    statement_resultset_test();
+//    statement_resultset_test();
     preparedstatement_resultset_test();
     
     return 0;
