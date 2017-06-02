@@ -26,6 +26,11 @@ Connection *MySQLStatement::GetConnection()
     return connection_;
 }
 
+bool MySQLStatement::Init()
+{
+    return true;
+}
+
 bool MySQLStatement::Execute(const std::string &sql)
 {
     if (mysql_real_query(connection_->GetMySQLHandler(), sql.c_str(), sql.length()) != 0)

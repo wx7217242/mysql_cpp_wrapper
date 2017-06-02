@@ -16,6 +16,8 @@ public:
     
     virtual Connection* GetConnection() ;
     
+    virtual bool Init();
+    
     virtual ResultSet* GetResultSet() ;
     
     virtual bool Execute(const std::string& sql) ;

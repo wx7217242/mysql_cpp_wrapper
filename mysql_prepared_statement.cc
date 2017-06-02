@@ -17,25 +17,7 @@ MySQLPreparedStatement::MySQLPreparedStatement(MySQLConnection *conn, const std:
 {
     assert(conn != NULL && sql.size() > 0);
     
-    param_buffer_ = conn->param_buffer();
-    assert(param_buffer_ != NULL);
     
-    param_buffer_->ResetBuffer();
-    cur_param_idx_ = 0;
-    
-    mysql_stmt_ = mysql_stmt_init(connection_->GetMySQLHandler());
-    if (mysql_stmt_ == NULL)
-    {
-        throw MySQLException(GetError());
-    }    
-    
-    if (mysql_stmt_prepare(mysql_stmt_, sql.c_str(), sql.length()) != 0)
-    {
-        throw MySQLException(GetError());
-    }
-    
-    param_count_ = mysql_stmt_param_count(mysql_stmt_);
-    params_.resize(param_count_);
 }
 
 MySQLPreparedStatement::~MySQLPreparedStatement()
@@ -244,3 +226,31 @@ bool MySQLPreparedStatement::SetParamToBuffer(uint32_t param_idx, enum_field_typ
     return false;
 }
 
+
+
+bool MySQLPreparedStatement::Init()
+{
+    param_buffer_ = connection_->param_buffer();
+    assert(param_buffer_ != NULL);
+    
+    param_buffer_->ResetBuffer();
+    cur_param_idx_ = 0;
+    
+    mysql_stmt_ = mysql_stmt_init(connection_->GetMySQLHandler());
+    if (mysql_stmt_ == NULL)
+    {
+        return false;
+//        throw MySQLException(GetError());
+    }    
+    
+    if (mysql_stmt_prepare(mysql_stmt_, sql_.c_str(), sql_.length()) != 0)
+    {
+        return false;
+//        throw MySQLException(GetError());
+    }
+    
+    param_count_ = mysql_stmt_param_count(mysql_stmt_);
+    params_.resize(param_count_);
+    
+    return true;
+}

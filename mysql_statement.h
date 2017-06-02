@@ -14,6 +14,8 @@ public:
     
     virtual Connection* GetConnection();
     
+    virtual bool Init();
+    
 //      virtual void Cancel() = 0;
 //      virtual void ClearWarnings() = 0;
 //      virtual void Close() = 0;
