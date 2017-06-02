@@ -6,27 +6,26 @@
 #include <vector>
 #include <mysql/mysql.h>
 
-class MySQLStatement;
-class MySQLResultSet;
-class MySQLPreparedStatement;
-class MySQLPreparedResultSet;
+class Statement;
+class PreparedStatement;
 
 class MySQLConnection : public Connection
 {
-    friend class MySQLStatement;
-    friend class MySQLResultSet;
-    friend class MySQLPreparedStatement;
-    friend class MySQLPreparedResultSet;
 public:
-    MySQLConnection(const char* host, const char* user, const char* passwd, const char* database, 
-                    short port, uint32_t param_buffer_size = 1024 * 1024, uint32_t result_buffer_size = 1024 * 1024);
+    MySQLConnection(const char* host, 
+                    const char* user, 
+                    const char* passwd, 
+                    const char* database, 
+                    short port, 
+                    uint32_t param_buf_size = kDefaultParamBufferSize, 
+                    uint32_t result_buf_size = kDefaultResultBufferSize);
     virtual ~MySQLConnection();
     
     virtual bool Connect(const char* charset, unsigned int timeout, bool auto_commit);
     virtual bool Reconnect();
     virtual bool IsConnected();
     
-    virtual Statement*CreateStatement();
+    virtual Statement* CreateStatement();
     virtual PreparedStatement* PrepareStatement(const std::string& sql);
     
     virtual void SetAutoCommit(bool auto_commit);

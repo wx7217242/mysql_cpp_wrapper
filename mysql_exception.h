@@ -1,12 +1,36 @@
-#ifndef MYSQL_EXCEPTION_H_
-#define MYSQL_EXCEPTION_H_
+#ifndef EXCEPTION_H_
+#define EXCEPTION_H_
 
-#include "exception.h"
+#include <stdexcept>
+
+class Exception: public std::exception
+{
+public:
+    Exception(const std::string& reason) : reason_(reason)
+    {    
+    }
+    
+    virtual ~Exception() throw()
+    {   
+    }
+    
+    virtual const char* what() const throw()
+    {
+        return reason_.c_str();
+    }
+    
+private:
+    std::string reason_;
+};
 
 class MySQLException : public Exception
 {
 public:
-    MySQLException(const std::string& reason);
+    
+    MySQLException(const std::string& reason) : Exception(reason)
+    {
+    }
 };
+
 
 #endif

@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <vector>
 
+const int kDefaultParamBufferSize = 10 * 1024;
+const int kDefaultResultBufferSize = 1024 * 1024;
+
 class MySQLBuffer
 {
 public:

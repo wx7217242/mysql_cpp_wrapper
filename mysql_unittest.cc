@@ -287,7 +287,7 @@ void preparedstatement_resultset_test()
 int main()
 {
     statement_resultset_test();
-//    preparedstatement_resultset_test();
+    preparedstatement_resultset_test();
     
     return 0;
 }
