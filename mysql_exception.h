@@ -3,14 +3,14 @@
 
 #include <stdexcept>
 
-class Exception: public std::exception
+class MySQLException: public std::exception
 {
 public:
-    Exception(const std::string& reason) : reason_(reason)
+    MySQLException(const std::string& reason) : reason_(reason)
     {    
     }
     
-    virtual ~Exception() throw()
+    virtual ~MySQLException() throw()
     {   
     }
     
@@ -23,14 +23,6 @@ private:
     std::string reason_;
 };
 
-class MySQLException : public Exception
-{
-public:
-    
-    MySQLException(const std::string& reason) : Exception(reason)
-    {
-    }
-};
 
 
 #endif

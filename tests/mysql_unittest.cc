@@ -6,11 +6,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "mysql_connection.h"
-#include "mysql_exception.h"
-#include "mysql_prepared_statement.h"
-#include "mysql_resultset.h"
-#include "mysql_statement.h"
+#include "../mysql_connection.h"
+#include "../mysql_exception.h"
+#include "../mysql_prepared_statement.h"
+#include "../mysql_resultset.h"
+#include "../mysql_statement.h"
 
 
 #include <iostream>
@@ -19,7 +19,7 @@ using namespace std;
 const char* host = "192.168.157.1";
 const char* user = "root";
 const char* passwd = "root";
-const char* database = "generic_game";
+const char* database = "mysql_test";
 short port = 3306;
 
 /*
