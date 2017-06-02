@@ -33,6 +33,8 @@ public:
       virtual uint64_t GetUInt64(uint32_t col_index, uint64_t default_val) const = 0;
       
       virtual uint32_t GetString(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const = 0;
+    
+      virtual std::string GetString(uint32_t col_index)  const = 0;
       
       virtual bool IsNull(uint32_t col_index) const = 0;
       

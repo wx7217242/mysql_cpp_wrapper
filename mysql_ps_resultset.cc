@@ -71,10 +71,10 @@ bool MySQLPreparedResultSet::Next()
         fprintf(stderr, "%s\n", stmt_->GetError());
         break;
     case MYSQL_NO_DATA: // 不存在行／数据
-        fprintf(stderr, "不存在行／数据\n");
+//        fprintf(stderr, "不存在行／数据\n");
         break;
     case MYSQL_DATA_TRUNCATED: // 出现数据截短
-        fprintf(stderr, "出现数据截短\n");
+//        fprintf(stderr, "出现数据截短\n");
         break;
     default:
         break;
@@ -188,6 +188,17 @@ uint32_t MySQLPreparedResultSet::GetString(uint32_t col_index, char *buffer, uin
     return 0;
 }
 
+std::string MySQLPreparedResultSet::GetString(uint32_t col_index) const
+{
+    if (col_index >= 0 && col_index < field_count_)
+    {
+        uint32_t buffer_length = static_cast<uint32_t>(fields_length_[col_index]); //data.buffer_length
+        const MYSQL_BIND& data = results_[col_index];
+        return std::string(static_cast<char*>(data.buffer), buffer_length);
+    }
+    return "";
+}
+
 bool MySQLPreparedResultSet::IsNull(uint32_t col_index) const
 {
     if (col_index >= 0 && col_index < field_count_)
@@ -267,8 +278,9 @@ bool MySQLPreparedResultSet::BindResults()
         }break;
         default:
         {
+            data.buffer_length = mysql_fields[i].length;
             fprintf(stderr, "other mysql type: %d\n", mysql_fields[i].type);
-            return false;
+//            return false;
         }break;
         }
         

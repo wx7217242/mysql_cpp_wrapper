@@ -35,6 +35,8 @@ public:
     
     virtual uint32_t GetString(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const;
     
+    virtual std::string GetString(uint32_t col_index)  const;
+    
     virtual bool IsNull(uint32_t col_index) const;
     
 private:

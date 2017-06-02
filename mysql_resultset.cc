@@ -164,6 +164,16 @@ uint32_t MySQLResultSet::GetString(uint32_t col_index, char* buffer, uint32_t ma
     return 0;
 }
 
+std::string MySQLResultSet::GetString(uint32_t col_index) const
+{
+    if (IsCurRowValid(col_index))
+    {
+        uint32_t field_length = static_cast<uint32_t>(fields_length_[col_index]);
+        return std::string(cur_row_[col_index], field_length);
+    }
+    return "";
+}
+
 bool MySQLResultSet::IsNull(uint32_t col_index) const
 {
     return false;
