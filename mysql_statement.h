@@ -12,8 +12,6 @@ public:
     MySQLStatement(MySQLConnection* conn);
     virtual ~MySQLStatement();
     
-    virtual bool Init() { return true; }
-    
     virtual Connection* GetConnection();
     
 //      virtual void Cancel() = 0;

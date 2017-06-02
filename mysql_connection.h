@@ -6,44 +6,43 @@
 #include <vector>
 #include <mysql/mysql.h>
 
-class Statement;
-class PreparedStatement;
+class MySQLStatement;
+class MySQLResultSet;
+class MySQLPreparedStatement;
+class MySQLPreparedResultSet;
 
 class MySQLConnection : public Connection
 {
+    friend class MySQLStatement;
+    friend class MySQLResultSet;
+    friend class MySQLPreparedStatement;
+    friend class MySQLPreparedResultSet;
 public:
-    MySQLConnection(const char* host, 
-                    short port, 
-                    const char* user, 
-                    const char* passwd, 
-                    const char* database, 
-                    uint32_t param_buf_size = kDefaultBufferSize, 
-                    uint32_t result_buf_size = kDefaultBufferSize);
+    MySQLConnection(const char* host, const char* user, const char* passwd, const char* database, 
+                    short port, uint32_t param_buffer_size = 1024 * 1024, uint32_t result_buffer_size = 1024 * 1024);
     virtual ~MySQLConnection();
     
     virtual bool Connect(const char* charset, unsigned int timeout, bool auto_commit);
     virtual bool Reconnect();
     virtual bool IsConnected();
     
-    virtual Statement* CreateStatement();
+    virtual Statement*CreateStatement();
     virtual PreparedStatement* PrepareStatement(const std::string& sql);
     
     virtual void SetAutoCommit(bool auto_commit);
     virtual void Commit();
-    
-    virtual bool GetAutoCommit() { return auto_commit_; }
+    virtual bool GetAutoCommit();
     
     virtual void Close();
     
-    virtual int GetErrNo() { return mysql_errno(&mysql_); }
+    virtual int GetErrNo();
+    virtual const char* GetError();
     
-    virtual const char* GetError() { return mysql_error(&mysql_); }
+    MYSQL* GetMySQLHandler();
     
-    MYSQL* GetMySQLHandler() { return &mysql_; }
+    MySQLBuffer* param_buffer() ;
     
-    MySQLBuffer* param_buffer() { return &param_buffer_; }
-    
-    MySQLBuffer* result_buffer() { return &result_buffer_; }
+    MySQLBuffer* result_buffer() ;
     
     
 private:

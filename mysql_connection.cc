@@ -9,9 +9,9 @@
 #include <stdlib.h>
 #include <assert.h>
 
-MySQLConnection::MySQLConnection(const char *host, short port, const char *user, const char *passwd, 
-                                 const char *database, uint32_t param_buf_size, uint32_t result_buf_size)
-: Connection(host, port, user, passwd, database),
+MySQLConnection::MySQLConnection(const char *host, const char *user, const char *passwd, 
+                                 const char *database, short port, uint32_t param_buffer_size, uint32_t result_buffer_size)
+: Connection(host, user, passwd, database, port),
   connected_(false),
   host_(host),
   user_(user),
@@ -21,8 +21,8 @@ MySQLConnection::MySQLConnection(const char *host, short port, const char *user,
   ping_counter_(0),
   timeout_(15),
   auto_commit_(true),
-  param_buffer_(param_buf_size),
-  result_buffer_(result_buf_size)
+  param_buffer_(param_buffer_size),
+  result_buffer_(result_buffer_size)
 {
     if (mysql_init(&mysql_) == NULL)
     {
@@ -49,14 +49,8 @@ bool MySQLConnection::Connect(const char *charset, unsigned int timeout, bool au
     mysql_options(&mysql_, MYSQL_OPT_READ_TIMEOUT, &timeout);
     mysql_options(&mysql_, MYSQL_OPT_WRITE_TIMEOUT, &timeout);
         
-    if (mysql_real_connect(&mysql_, 
-                           host_.c_str(), 
-                           user_.c_str(), 
-                           passwd_.c_str(), 
-                           db_.c_str(), 
-                           port_, 
-                           NULL, CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS) 
-            != NULL)
+    if (mysql_real_connect(&mysql_, host_.c_str(), user_.c_str(), passwd_.c_str(), db_.c_str(), port_, 
+                           NULL, CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS) != NULL)
     {
         connected_ = true;
         mysql_autocommit(&mysql_, auto_commit_);
@@ -97,16 +91,7 @@ Statement *MySQLConnection::CreateStatement()
         fprintf(stderr, "not connected!\n");
         return NULL;
     }
-    Statement * stmt = new MySQLStatement(this);
-    if (stmt != NULL)
-    {
-        if (!stmt->Init())
-        {
-            delete stmt;
-            stmt = NULL;
-        }
-    }
-    return stmt;
+    return new MySQLStatement(this);
 }
 
 PreparedStatement *MySQLConnection::PrepareStatement(const std::string &sql)
@@ -116,16 +101,7 @@ PreparedStatement *MySQLConnection::PrepareStatement(const std::string &sql)
         fprintf(stderr, "not connected!\n");
         return NULL;
     }
-    PreparedStatement* stmt = new MySQLPreparedStatement(this, sql);  
-    if (stmt != NULL)
-    {
-        if (!stmt->Init())
-        {
-            delete stmt;
-            stmt = NULL;
-        }
-    }
-    return stmt;
+    return new MySQLPreparedStatement(this, sql); 
 }
 
 void MySQLConnection::SetAutoCommit(bool auto_commit)
@@ -142,7 +118,10 @@ void MySQLConnection::Commit()
     }
 }
 
-
+bool MySQLConnection::GetAutoCommit()
+{
+    return auto_commit_;
+}
 
 void MySQLConnection::Close()
 {
@@ -152,4 +131,29 @@ void MySQLConnection::Close()
         mysql_close(&mysql_);
         connected_ = false;
     }
+}
+
+int MySQLConnection::GetErrNo()
+{
+    return mysql_errno(&mysql_);
+}
+
+const char *MySQLConnection::GetError()
+{
+    return mysql_error(&mysql_);
+}
+
+MYSQL *MySQLConnection::GetMySQLHandler()
+{
+    return &mysql_;
+}
+
+MySQLBuffer *MySQLConnection::param_buffer()
+{
+    return &param_buffer_;
+}
+
+MySQLBuffer *MySQLConnection::result_buffer()
+{
+    return &result_buffer_;
 }

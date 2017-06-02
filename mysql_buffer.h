@@ -3,71 +3,35 @@
 
 #include <stdint.h>
 #include <vector>
-#include <string.h>
-
-const uint32_t kDefaultBufferSize = 10 * 1024;
 
 class MySQLBuffer
 {
 public:
-    MySQLBuffer(uint64_t size) : 
-        buffer_size_(size),
-        buffer_cur_pos_(0)
-    {
-        buffer_.resize(buffer_size_);
-    }
+    MySQLBuffer(uint64_t size);
     
-    ~MySQLBuffer()
-    {
-        
-    }
+    ~MySQLBuffer();
     
-    bool SetParamToBuffer(const void* param, uint64_t size)
-    {
-        if (buffer_cur_pos_ + size > buffer_size_)
-            return false;
-        
-        memcpy(buffer_from_current(), param, size);
-        return true;
-    }
+    bool SetParamToBuffer(const void* param, uint64_t size);
     
-    void ResetBuffer()
-    {
-        buffer_cur_pos_ = 0;
-        buffer_.clear();
-    }
+    void ResetBuffer();
     
-    char* buffer() { return buffer_.data(); }
+    char* buffer();
     
-    char* buffer_from_current() { return buffer_.data() + buffer_cur_pos_; }
+    char* buffer_from_current();
     
-    uint64_t buffer_size() const { return buffer_size_; }
+    uint64_t buffer_size() const;
     
-    uint64_t buffer_cur_pos() const { return buffer_cur_pos_; }
+    uint64_t buffer_cur_pos() const;
     
-    bool IsCapacityAvailable(uint64_t size) const
-    {
-        return buffer_cur_pos_ + size <= buffer_size_;
-    }
+    bool IsCapacityAvailable(uint64_t size) const;
     
-    bool IncreaseBufferCurPos(uint64_t offset)
-    {
-        if (IsCapacityAvailable(offset))
-        {
-            buffer_cur_pos_ += offset;
-            return true;
-        }
-        return false;
-    }
+    bool IncreaseBufferCurPos(uint64_t offset);
     
 private:
     std::vector<char> buffer_;
     const uint64_t buffer_size_;
     uint64_t buffer_cur_pos_;
 };
-
-
-
 
 
 

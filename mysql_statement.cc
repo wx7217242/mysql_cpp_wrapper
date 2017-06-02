@@ -50,14 +50,6 @@ ResultSet* MySQLStatement::ExecuteQuery(const std::string &sql)
         return NULL;
     }
     resultset_ = new MySQLResultSet(this);
-    if (resultset_)
-    {
-        if (!resultset_->Init())
-        {
-            delete resultset_;
-            resultset_ = NULL;
-        }
-    }
     return resultset_;
 }
 

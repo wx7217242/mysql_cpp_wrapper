@@ -14,8 +14,6 @@ public:
     MySQLPreparedStatement(MySQLConnection* conn, const std::string& sql) ;
     virtual ~MySQLPreparedStatement() ;
     
-    virtual bool Init();
-    
     virtual Connection* GetConnection() ;
     
     virtual ResultSet* GetResultSet() ;
@@ -23,35 +21,35 @@ public:
     virtual bool Execute(const std::string& sql) ;
     virtual bool Execute() ;
     
-    virtual ResultSet* ExecuteQuery(const std::string& sql) ;
-    virtual ResultSet* ExecuteQuery() ;
+    virtual ResultSet * ExecuteQuery(const std::string& sql) ;
+    virtual ResultSet * ExecuteQuery() ;
     
     virtual int ExecuteUpdate(const std::string& sql) ;
     virtual int ExecuteUpdate() ;
     
     virtual bool GetMoreResults() ;
     
-    virtual bool SetBoolean(uint32_t idx, bool value) ;
+    virtual bool SetBoolean(uint32_t param_idx, bool value) ;
     
-    virtual bool SetInt(uint32_t idx, int32_t value) ;
+    virtual bool SetInt(uint32_t param_idx, int32_t value) ;
     
-    virtual bool SetUInt(uint32_t idx, uint32_t value) ;
+    virtual bool SetUInt(uint32_t param_idx, uint32_t value) ;
     
-    virtual bool SetBigInt(uint32_t idx, int64_t value) ;
+    virtual bool SetBigInt(uint32_t param_idx, int64_t value) ;
     
-    virtual bool SetInt64(uint32_t idx, int64_t value) ;
+    virtual bool SetInt64(uint32_t param_idx, int64_t value) ;
     
-    virtual bool SetUInt64(uint32_t idx, uint64_t value) ;
+    virtual bool SetUInt64(uint32_t param_idx, uint64_t value) ;
     
-    virtual bool SetDouble(uint32_t idx, double value) ;
+    virtual bool SetDouble(uint32_t param_idx, double value) ;
     
-    virtual bool SetBlob(uint32_t idx, const char* blob, uint32_t length) ;
+    virtual bool SetBlob(uint32_t param_idx, const char* blob, uint32_t length) ;
     
-    virtual bool SetString(uint32_t idx, const char* value) ;
+    virtual bool SetString(uint32_t param_idx, const char* value) ;
     
-    virtual bool SetDateTime(uint32_t idx, const char* value) ;
-    
-    virtual bool SetNull(uint32_t idx, int sql_type) ;    
+    virtual bool SetDateTime(uint32_t param_idx, const char* value) ;
+
+    virtual bool SetNull(uint32_t param_idx, int sql_type) ;    
     
     int GetErrNo();
     const char* GetError();
@@ -64,7 +62,7 @@ public:
     
     
 private:
-    bool SetParamToBuffer(uint32_t idx, enum_field_types type, const void* value, uint64_t size, bool is_unsigned) ;
+    bool SetParamToBuffer(uint32_t param_idx, enum_field_types type, const void* value, uint64_t size, bool is_unsigned) ;
     
 private:
     MySQLConnection* connection_;

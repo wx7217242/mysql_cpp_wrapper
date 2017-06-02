@@ -16,27 +16,25 @@ public:
     
     virtual bool Next();
     
-    virtual bool Init();
-    
     virtual const Statement* GetStatement() const;
     
-    virtual uint32_t GetBlob(uint32_t idx, char* buffer, uint32_t max_buf_len)  const;
+    virtual uint32_t GetBlob(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const;
     
-    virtual bool GetBoolean(uint32_t idx, bool def) const;
+    virtual bool GetBoolean(uint32_t col_index, bool default_val) const;
     
-    virtual double GetDouble(uint32_t idx, double def) const;
+    virtual double GetDouble(uint32_t col_index, double default_val) const;
     
-    virtual int32_t GetInt(uint32_t idx, int32_t def)  const;
+    virtual int32_t GetInt(uint32_t col_index, int32_t default_val)  const;
     
-    virtual uint32_t GetUInt(uint32_t idx, uint32_t def) const;
+    virtual uint32_t GetUInt(uint32_t col_index, uint32_t default_val) const;
     
-    virtual int64_t GetInt64(uint32_t idx, int64_t def) const;
+    virtual int64_t GetInt64(uint32_t col_index, int64_t default_val) const;
     
-    virtual uint64_t GetUInt64(uint32_t idx, uint64_t def) const;
+    virtual uint64_t GetUInt64(uint32_t col_index, uint64_t default_val) const;
     
-    virtual uint32_t GetString(uint32_t idx, char* buffer, uint32_t max_buf_len)  const;
+    virtual uint32_t GetString(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const;
     
-    virtual bool IsNull(uint32_t idx) const;
+    virtual bool IsNull(uint32_t col_index) const;
     
     void set_mysql_metadata_res(MYSQL_RES* res);
     

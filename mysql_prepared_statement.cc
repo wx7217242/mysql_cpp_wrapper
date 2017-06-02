@@ -16,19 +16,8 @@ MySQLPreparedStatement::MySQLPreparedStatement(MySQLConnection *conn, const std:
     affected_rows_(0)
 {
     assert(conn != NULL && sql.size() > 0);
-}
-
-MySQLPreparedStatement::~MySQLPreparedStatement()
-{
-    if (mysql_stmt_ != NULL)
-    {
-        mysql_stmt_close(mysql_stmt_);
-    }
-}
-
-bool MySQLPreparedStatement::Init()
-{
-    param_buffer_ = connection_->param_buffer();
+    
+    param_buffer_ = conn->param_buffer();
     assert(param_buffer_ != NULL);
     
     param_buffer_->ResetBuffer();
@@ -37,19 +26,22 @@ bool MySQLPreparedStatement::Init()
     mysql_stmt_ = mysql_stmt_init(connection_->GetMySQLHandler());
     if (mysql_stmt_ == NULL)
     {
-        return false;
-//        throw MySQLException(GetError());
+        throw MySQLException(GetError());
     }    
     
-    if (mysql_stmt_prepare(mysql_stmt_, sql_.c_str(), sql_.length()) != 0)
+    if (mysql_stmt_prepare(mysql_stmt_, sql.c_str(), sql.length()) != 0)
     {
-        return false;
-//        throw MySQLException(GetError());
+        throw MySQLException(GetError());
     }
     
     param_count_ = mysql_stmt_param_count(mysql_stmt_);
     params_.resize(param_count_);
-    return true;
+}
+
+MySQLPreparedStatement::~MySQLPreparedStatement()
+{
+    if (mysql_stmt_ != NULL)
+        mysql_stmt_close(mysql_stmt_);
 }
 
 Connection *MySQLPreparedStatement::GetConnection()
@@ -99,14 +91,6 @@ ResultSet *MySQLPreparedStatement::ExecuteQuery()
     {
         Execute();
         resultset_ = new MySQLPreparedResultSet(this);
-        if (resultset_)
-        {
-            if (!resultset_->Init())
-            {
-                delete resultset_;
-                resultset_ = NULL;
-            }
-        }
         return resultset_; 
     }
     catch(MySQLException& e)
@@ -147,58 +131,58 @@ bool MySQLPreparedStatement::GetMoreResults()
     return false;
 }
 
-bool MySQLPreparedStatement::SetBoolean(uint32_t idx, bool value)
+bool MySQLPreparedStatement::SetBoolean(uint32_t param_idx, bool value)
 {
     char val = (value ? '1' : '0');
-    return SetParamToBuffer(idx, MYSQL_TYPE_TINY, &val, sizeof(val), false);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_TINY, &val, sizeof(val), false);
 }
 
-bool MySQLPreparedStatement::SetInt(uint32_t idx, int32_t value)
+bool MySQLPreparedStatement::SetInt(uint32_t param_idx, int32_t value)
 {
-    return SetParamToBuffer(idx, MYSQL_TYPE_LONG, &value, sizeof(value), false);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_LONG, &value, sizeof(value), false);
 }
 
-bool MySQLPreparedStatement::SetUInt(uint32_t idx, uint32_t value)
+bool MySQLPreparedStatement::SetUInt(uint32_t param_idx, uint32_t value)
 {
-    return SetParamToBuffer(idx, MYSQL_TYPE_LONG, &value, sizeof(value), true);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_LONG, &value, sizeof(value), true);
 }
 
-bool MySQLPreparedStatement::SetBigInt(uint32_t idx, int64_t value)
+bool MySQLPreparedStatement::SetBigInt(uint32_t param_idx, int64_t value)
 {
-    return SetParamToBuffer(idx, MYSQL_TYPE_LONG, &value, sizeof(value), false);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_LONG, &value, sizeof(value), false);
 }
 
-bool MySQLPreparedStatement::SetInt64(uint32_t idx, int64_t value)
+bool MySQLPreparedStatement::SetInt64(uint32_t param_idx, int64_t value)
 {
-    return SetParamToBuffer(idx, MYSQL_TYPE_LONGLONG, &value, sizeof(value), false);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_LONGLONG, &value, sizeof(value), false);
 }
 
-bool MySQLPreparedStatement::SetUInt64(uint32_t idx, uint64_t value)
+bool MySQLPreparedStatement::SetUInt64(uint32_t param_idx, uint64_t value)
 {
-    return SetParamToBuffer(idx, MYSQL_TYPE_LONGLONG, &value, sizeof(value), true);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_LONGLONG, &value, sizeof(value), true);
 }
 
-bool MySQLPreparedStatement::SetDouble(uint32_t idx, double value)
+bool MySQLPreparedStatement::SetDouble(uint32_t param_idx, double value)
 {
-    return SetParamToBuffer(idx, MYSQL_TYPE_DOUBLE, &value, sizeof(value), false);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_DOUBLE, &value, sizeof(value), false);
 }
 
-bool MySQLPreparedStatement::SetBlob(uint32_t idx, const char *blob, uint32_t length)
+bool MySQLPreparedStatement::SetBlob(uint32_t param_idx, const char *blob, uint32_t length)
 {
-    return SetParamToBuffer(idx, MYSQL_TYPE_BLOB, blob, length, false);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_BLOB, blob, length, false);
 }
 
-bool MySQLPreparedStatement::SetString(uint32_t idx, const char *value)
+bool MySQLPreparedStatement::SetString(uint32_t param_idx, const char *value)
 {
-    return SetParamToBuffer(idx, MYSQL_TYPE_STRING, value, strlen(value), false);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_STRING, value, strlen(value), false);
 }
 
-bool MySQLPreparedStatement::SetDateTime(uint32_t idx, const char *value)
+bool MySQLPreparedStatement::SetDateTime(uint32_t param_idx, const char *value)
 {
-    return SetParamToBuffer(idx, MYSQL_TYPE_TIME, value, strlen(value), false);
+    return SetParamToBuffer(param_idx, MYSQL_TYPE_TIME, value, strlen(value), false);
 }
 
-bool MySQLPreparedStatement::SetNull(uint32_t idx, int sql_type)
+bool MySQLPreparedStatement::SetNull(uint32_t param_idx, int sql_type)
 {
     // MYSQL_TYPE_NULL
     return false; // TODO
@@ -233,17 +217,17 @@ MYSQL_STMT *MySQLPreparedStatement::GetMySQLStmtHandler() const
     return mysql_stmt_;
 }
 
-bool MySQLPreparedStatement::SetParamToBuffer(uint32_t idx, enum_field_types type, const void *value, uint64_t size, bool is_unsigned)
+bool MySQLPreparedStatement::SetParamToBuffer(uint32_t param_idx, enum_field_types type, const void *value, uint64_t size, bool is_unsigned)
 {
-    if (idx < param_count_ && param_buffer_->IsCapacityAvailable(size))
+    if (param_idx < param_count_ && param_buffer_->IsCapacityAvailable(size))
     {
-        if (cur_param_idx_ != idx)
+        if (cur_param_idx_ != param_idx)
         {
             fprintf(stderr, "param index error!\n");
             return false;
         }
         
-        MYSQL_BIND& data = params_[idx];	
+        MYSQL_BIND& data = params_[param_idx];	
         memset(&data, 0, sizeof(data));
         
         data.buffer_type = type;

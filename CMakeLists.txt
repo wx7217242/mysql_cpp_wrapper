@@ -15,7 +15,7 @@ set(CXX_FLAGS
  -Wall
 # -Wextra
  #-Werror
- -Wconversion
+ #-Wconversion
  #-Wno-unused-parameter
  -Wold-style-cast
  -Woverloaded-virtual
@@ -58,5 +58,5 @@ ADD_EXECUTABLE(${TARGET} ${SOURCES_FILE})
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 # 链接的动态库
-TARGET_LINK_LIBRARIES(${TARGET} /usr/lib64/mysql/libmysqlclient.so )
+TARGET_LINK_LIBRARIES(${TARGET} mysqlclient )
 
