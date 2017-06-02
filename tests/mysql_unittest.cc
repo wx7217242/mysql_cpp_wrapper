@@ -238,15 +238,15 @@ void preparedstatement_resultset_test()
             
             if (resultset != NULL)
             {
-//                delete resultset; 
-//                resultset= NULL;
+                delete resultset; 
+                resultset= NULL;
             }
             
-//            if (stmt != NULL)
-//            {
-//                delete stmt; 
-//                stmt= NULL;
-//            }
+            if (stmt != NULL)
+            {
+                delete stmt; 
+                stmt= NULL;
+            }
             sql = "update mysql_test set id = ?";
             stmt = conn->PrepareStatement(sql);
             if (stmt == NULL)

@@ -74,7 +74,6 @@ bool MySQLPreparedResultSet::Next()
     {
     case 0:
         has_result = true;
-        printf("cur buf size:%ld\n", result_buffer_->buffer_cur_pos());
         break;
     case 1:
         fprintf(stderr, "%s\n", stmt_->GetError());
@@ -270,7 +269,7 @@ bool MySQLPreparedResultSet::BindResults()
             data.buffer_length = mysql_fields[i].length;
             
             data.buffer = result_buffer_->buffer_from_current();
-            if (!result_buffer_->IncreaseBufferCurPos(data.buffer_length)) // need extend 
+            if (!result_buffer_->IncreaseBufferCurPos(data.buffer_length)) // need extend
             {
                 need_extend = true;
                 break;
