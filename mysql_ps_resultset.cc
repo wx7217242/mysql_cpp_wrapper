@@ -115,7 +115,8 @@ bool MySQLPreparedResultSet::GetBoolean(uint32_t col_index, bool default_val) co
         char* buffer = reinterpret_cast<char*>(data.buffer);
         return *buffer == '1';
     }
-    return default_val;}
+    return default_val;
+}
 
 double MySQLPreparedResultSet::GetDouble(uint32_t col_index, double default_val) const
 {
