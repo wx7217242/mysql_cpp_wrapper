@@ -6,6 +6,7 @@
 
 const int kDefaultParamBufferSize = 1024; 
 const int kDefaultResultBufferSize = 10 * 1024; 
+const int kMaxBufferSize = 10 * 1024 * 1024;
 
 class MySQLBuffer
 {

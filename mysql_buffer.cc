@@ -54,11 +54,12 @@ bool MySQLBuffer::IncreaseBufferCurPos(uint64_t offset)
 
 bool MySQLBuffer::ExtendBuffer()
 {
-    buffer_size_ += (buffer_size_ << 1);
-    if (buffer_size_ >= 10 * 1024 * 1024) // max buffer size 10M
+    if (buffer_size_ + (buffer_size_ << 1) >= kMaxBufferSize)
     {
         return false;
     }
+    
+    buffer_size_ += (buffer_size_ << 1);
     buffer_.resize(buffer_size_);
     return true;
 }
