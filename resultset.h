@@ -12,6 +12,8 @@ public:
       virtual ~ResultSet() {}
       
       virtual bool Next() = 0;
+    
+      virtual bool Init() = 0;
       
       virtual const Statement* GetStatement() const = 0;
       

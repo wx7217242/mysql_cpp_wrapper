@@ -38,10 +38,7 @@ MySQLResultSet::MySQLResultSet(MySQLStatement *stmt) :
     fields_length_(NULL)
 {
     assert(stmt_ != NULL);
-    if (!StoreResults())
-    {
-        fprintf(stderr, "when StoreResults occured error!\n");
-    }
+    
 }
 
 MySQLResultSet::~MySQLResultSet() 
@@ -60,6 +57,16 @@ bool MySQLResultSet::Next()
         assert(fields_length_ != NULL);
     }
     return has_next;
+}
+
+bool MySQLResultSet::Init()
+{
+    if (!StoreResults())
+    {
+        fprintf(stderr, "when StoreResults occured error!\n");
+        return false;
+    }
+    return true;
 }
 
 const Statement* MySQLResultSet::GetStatement() const

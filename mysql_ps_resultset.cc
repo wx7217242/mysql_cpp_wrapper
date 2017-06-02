@@ -44,17 +44,7 @@ MySQLPreparedResultSet::MySQLPreparedResultSet(MySQLPreparedStatement *stmt) :
     rows_(0),
     has_result(false)
 {   
-    MySQLConnection* conn = static_cast<MySQLConnection*>(stmt_->GetConnection());
-    assert(conn != NULL);
     
-    result_buffer_ = conn->result_buffer();
-    assert(result_buffer_ != NULL);
-    result_buffer_->ResetBuffer();
-    
-    if (!BindResults())
-    {
-        fprintf(stderr, "MySQLPreparedResultSet BindResults failed!\n");
-    }
 }
 
 MySQLPreparedResultSet::~MySQLPreparedResultSet()
@@ -308,3 +298,21 @@ bool MySQLPreparedResultSet::BindResults()
     }
 }
 
+
+
+bool MySQLPreparedResultSet::Init()
+{
+    MySQLConnection* conn = static_cast<MySQLConnection*>(stmt_->GetConnection());
+    assert(conn != NULL);
+    
+    result_buffer_ = conn->result_buffer();
+    assert(result_buffer_ != NULL);
+    result_buffer_->ResetBuffer();
+    
+    if (!BindResults())
+    {
+        fprintf(stderr, "MySQLPreparedResultSet BindResults failed!\n");
+        return false;
+    }
+    return true;
+}
