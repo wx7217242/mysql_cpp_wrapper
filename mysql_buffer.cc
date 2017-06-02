@@ -48,7 +48,19 @@ bool MySQLBuffer::IncreaseBufferCurPos(uint64_t offset)
         buffer_cur_pos_ += offset;
         return true;
     }
+    
     return false;
+}
+
+bool MySQLBuffer::ExtendBuffer()
+{
+    buffer_size_ += (buffer_size_ << 1);
+    if (buffer_size_ >= 10 * 1024 * 1024)
+    {
+        return false;
+    }
+    buffer_.resize(buffer_size_);
+    return true;
 }
 
 

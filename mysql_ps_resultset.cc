@@ -17,7 +17,9 @@ static int MySQLStmtBindResult(MySQLPreparedStatement* stmt, MySQLPreparedResult
 
 int MySQLStmtFetch(MySQLPreparedStatement *stmt)
 {
-    return mysql_stmt_fetch(stmt->GetMySQLStmtHandler());
+    MYSQL_STMT* mysql_stmt = stmt->GetMySQLStmtHandler();
+    assert(mysql_stmt != NULL);
+    return mysql_stmt_fetch(mysql_stmt);
 }
 
 bool MySQLStmtResultMetaData(MySQLPreparedStatement *stmt, MySQLPreparedResultSet *resultset)
@@ -44,7 +46,7 @@ MySQLPreparedResultSet::MySQLPreparedResultSet(MySQLPreparedStatement *stmt) :
     rows_(0),
     has_result(false)
 {   
-    
+    assert(stmt_ != NULL);
 }
 
 MySQLPreparedResultSet::~MySQLPreparedResultSet()
@@ -61,6 +63,12 @@ bool MySQLPreparedResultSet::Next()
 		memset(data.buffer, 0, data.buffer_length);
 	}
     
+    if (stmt_ == NULL)
+    {
+        return false;
+    }
+    
+    assert(stmt_ != NULL);
     int status = MySQLStmtFetch(stmt_);
     switch(status)
     {
@@ -234,62 +242,50 @@ bool MySQLPreparedResultSet::BindResults()
     // 获取每一列的信息，字段的类型
     mysql_fields = mysql_fetch_fields(mysql_metadata_res_);
     results_.resize(field_count_);
-    memset(results_.data(), 0, sizeof(MYSQL_BIND) * field_count_);
-                
-    for (uint32_t i = 0; i < field_count_; ++i)
+    memset(results_.data(), 0x00, sizeof(MYSQL_BIND) * field_count_);
+    
+    bool need_extend = false;
+    
+    do
     {
-        MYSQL_BIND &data = results_[i];
-        data.buffer_type = mysql_fields[i].type;
-        data.length = &(fields_length_[i]);
-        
-        switch (mysql_fields[i].type)
+        if (need_extend)
         {
-        case MYSQL_TYPE_LONGLONG: // long long
-        {
-            data.buffer_length = sizeof(long long);
-        }break;
-        case MYSQL_TYPE_DOUBLE:
-        {
-            data.buffer_length = sizeof(double);
-        }break;
-        case MYSQL_TYPE_FLOAT: // float
-        {
-            data.buffer_length = sizeof(float);
-        }break;
-        case MYSQL_TYPE_LONG: // int
-        {
-            data.buffer_length = sizeof(int);
-        }break;
-        case MYSQL_TYPE_TINY:
-        {
-            data.buffer_length = mysql_fields[i].length;
-        }break;
-        case MYSQL_TYPE_VAR_STRING:
-        case MYSQL_TYPE_STRING:
-        {
-            data.buffer_length = mysql_fields[i].length;
-        }break;
-        case MYSQL_TYPE_BLOB:
-        {
-            data.buffer_length = mysql_fields[i].length;
-        }break;
-        case MYSQL_TYPE_DATETIME:
-        {
-            data.buffer_length = sizeof(MYSQL_TIME);
-        }break;
-        default:
-        {
-            data.buffer_length = mysql_fields[i].length;
-        }break;
+            if (result_buffer_->ExtendBuffer())
+            {
+                result_buffer_->ResetBuffer();
+                memset(results_.data(), 0x00, sizeof(MYSQL_BIND) * field_count_);
+                need_extend = false;
+            }
+            else
+            {
+                abort();
+            }
         }
         
-        data.buffer = result_buffer_->buffer_from_current();
-        result_buffer_->IncreaseBufferCurPos(data.buffer_length);
+        for (uint32_t i = 0; i < field_count_; ++i)
+        {
+            MYSQL_BIND &data = results_[i];
+            data.buffer_type = mysql_fields[i].type;
+            data.length = &(fields_length_[i]);
+            data.buffer_length = mysql_fields[i].length;
+            
+            data.buffer = result_buffer_->buffer_from_current();
+            if (!result_buffer_->IncreaseBufferCurPos(data.buffer_length)) // need extend 
+            {
+                need_extend = true;
+                break;
+            }
+            
+            my_bool* isNull = result_buffer_->buffer_from_current();
+            if (!result_buffer_->IncreaseBufferCurPos(sizeof(my_bool)))
+            {
+                need_extend = true;
+                break;
+            }
+            data.is_null = isNull;
+        }
         
-        my_bool* isNull = result_buffer_->buffer_from_current();
-        result_buffer_->IncreaseBufferCurPos(sizeof(my_bool));
-        data.is_null = isNull;
-    }
+    } while (need_extend);
     
     if (result_buffer_->buffer_cur_pos() > result_buffer_->buffer_size())
     {

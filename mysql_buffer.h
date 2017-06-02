@@ -4,8 +4,8 @@
 #include "types.h"
 #include <vector>
 
-const int kDefaultParamBufferSize = 100 * 1024;   // 100k
-const int kDefaultResultBufferSize = 1024 * 1024; // 1M
+const int kDefaultParamBufferSize = 100 * 1024;
+const int kDefaultResultBufferSize = 10 * 1024; 
 
 class MySQLBuffer
 {
@@ -30,9 +30,11 @@ public:
     
     bool IncreaseBufferCurPos(uint64_t offset);
     
+    bool ExtendBuffer();
+    
 private:
     std::vector<char> buffer_;
-    const uint64_t buffer_size_;
+    uint64_t buffer_size_;
     uint64_t buffer_cur_pos_;
 };
 
