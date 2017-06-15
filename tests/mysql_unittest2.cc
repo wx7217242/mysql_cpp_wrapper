@@ -38,7 +38,7 @@ int main()
                 break;
             }
             
-            if (!conn->Connect("utf8", 15, true))
+            if (!conn->Connect())
             {
                 break;
             }

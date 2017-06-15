@@ -6,6 +6,7 @@
 #include <mysql/mysql.h>
 #include <stdexcept>
 
+
 namespace mysql 
 {
 
@@ -45,30 +46,18 @@ struct DBConf
     int timeout;
     int flag;
     bool autocommit;
-    uint32_t param_buf_size;
-    uint32_t result_buf_size;
-    DBConf(const char* h,
-           unsigned int p,
-           const char* u,
-           const char* pw,
-           const char* db,
-           const char* cs,
-           int t = 15,
-           int f = CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS,
-           bool a = true) : 
-        host(PTR_OR_EMPTY(h)),
-        port(p),
-        user(PTR_OR_EMPTY(u)),
-        password(PTR_OR_EMPTY(pw)),
-        database(PTR_OR_EMPTY(db)),
-        charset(PTR_OR_EMPTY(cs)),
-        timeout(t),
-        flag(f),
-        autocommit(a),
-        param_buf_size(),
-        result_buf_size()
-    {
-    }
+    unsigned int param_buf_size;
+    unsigned int result_buf_size;
+    
+    DBConf() : 
+        port(3306), \
+        charset("utf8"), 
+        timeout(15), 
+        flag(CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS), 
+        autocommit(true),
+        param_buf_size(kDefaultParamBufferSize),
+        result_buf_size(kDefaultResultBufferSize)
+    {}
 };
 
 class Connection
@@ -79,8 +68,7 @@ public:
                const char* passwd, 
                const char* database, 
                unsigned int port, 
-               uint32_t param_buf_size = kDefaultParamBufferSize, 
-               uint32_t result_buf_size = kDefaultResultBufferSize);
+               unsigned int param_buf_size = kDefaultParamBufferSize);
                
     Connection(DBConf& conf);
     

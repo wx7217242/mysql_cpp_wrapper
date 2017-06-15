@@ -1,20 +1,6 @@
 #ifndef MYSQL_CPP_CONN_TYPES_H_
 #define MYSQL_CPP_CONN_TYPES_H_
 
-#ifdef WIN32
-typedef char			int8_t;
-typedef short			int16_t;
-typedef int				int32_t;
-typedef	long long		int64_t;
-typedef unsigned char	uint8_t;
-typedef unsigned short	uint16_t;
-typedef unsigned int	uint32_t;
-typedef	unsigned long long	uint64_t;
-typedef int				socklen_t;
-#else
-#include <stdint.h>
-#endif
-
 #include <vector>
 #include <string.h>
 
@@ -28,7 +14,7 @@ const int kMaxBufferSize = 10 * 1024 * 1024;
 class MySQLBuffer
 {
 public:
-    MySQLBuffer(uint64_t size) : 
+    MySQLBuffer(size_t size) : 
         buffer_size_(size),
         buffer_cur_pos_(0)
     {
@@ -40,7 +26,7 @@ public:
         
     }
     
-    bool SetParamToBuffer(const void* param, uint64_t size)
+    bool SetParamToBuffer(const void* param, size_t size)
     {
         if (buffer_cur_pos_ + size > buffer_size_)
             return false;
@@ -59,16 +45,16 @@ public:
     
     char* buffer_from_current() { return buffer_.data() + buffer_cur_pos_; }
     
-    uint64_t buffer_size() const { return buffer_size_; }
+    size_t buffer_size() const { return buffer_size_; }
     
-    uint64_t buffer_cur_pos() const { return buffer_cur_pos_; }
+    size_t buffer_cur_pos() const { return buffer_cur_pos_; }
     
-    bool IsCapacityAvailable(uint64_t size) const
+    bool IsCapacityAvailable(size_t size) const
     {
         return buffer_cur_pos_ + size <= buffer_size_;
     }
     
-    bool IncreaseBufferCurPos(uint64_t offset)
+    bool IncreaseBufferCurPos(size_t offset)
     {
         if (IsCapacityAvailable(offset))
         {
@@ -93,8 +79,9 @@ public:
     
 private:
     std::vector<char> buffer_;
-    uint64_t buffer_size_;
-    uint64_t buffer_cur_pos_;
+    
+    size_t buffer_size_;
+    size_t buffer_cur_pos_;
 };
 
 }

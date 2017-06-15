@@ -35,10 +35,10 @@ public:
       
 //      virtual size_t GetFetchSize() = 0;
 //      virtual unsigned int GetMaxFieldSize() = 0;
-//      virtual uint64_t GetMaxRows() = 0;
+//      virtual size_t GetMaxRows() = 0;
 //      virtual unsigned int GetQueryTimeout() = 0;
 //      virtual sql::ResultSet::enum_type getResultSetType() = 0;
-//      virtual uint64_t getUpdateCount() = 0;
+//      virtual size_t getUpdateCount() = 0;
 //      virtual const SQLWarning * getWarnings() = 0;
 //      virtual void setCursorName(const sql::SQLString & name) = 0;
 //      virtual void setEscapeProcessing(bool enable) = 0;
@@ -67,27 +67,27 @@ public:
       
       virtual bool GetMoreResults() = 0;
       
-      virtual bool SetBoolean(uint32_t param_idx, bool value) = 0;
+      virtual bool SetBoolean(int idx, bool value) = 0;
       
-      virtual bool SetInt(uint32_t param_idx, int32_t value) = 0;
+      virtual bool SetInt(int idx, int value) = 0;
       
-      virtual bool SetUInt(uint32_t param_idx, uint32_t value) = 0;
+      virtual bool SetUInt(int idx, unsigned int value) = 0;
       
-      virtual bool SetBigInt(uint32_t param_idx, int64_t value) = 0;
+      virtual bool SetBigInt(int idx, long value) = 0;
       
-      virtual bool SetInt64(uint32_t param_idx, int64_t value) = 0;
+      virtual bool SetInt64(int idx, long value) = 0;
       
-      virtual bool SetUInt64(uint32_t param_idx, uint64_t value) = 0;
+      virtual bool SetUInt64(int idx, unsigned long value) = 0;
       
-      virtual bool SetDouble(uint32_t param_idx, double value) = 0;
+      virtual bool SetDouble(int idx, double value) = 0;
       
-      virtual bool SetBlob(uint32_t param_idx, const char* blob, uint32_t length) = 0;
+      virtual bool SetBlob(int idx, const char* blob, unsigned int length) = 0;
       
-      virtual bool SetString(uint32_t param_idx, const char* value) = 0;
+      virtual bool SetString(int idx, const char* value) = 0;
       
-      virtual bool SetDateTime(uint32_t param_idx, const char* value) = 0;
+      virtual bool SetDateTime(int idx, const char* value) = 0;
 
-      virtual bool SetNull(uint32_t param_idx, int sql_type) = 0;      
+      virtual bool SetNull(int idx, int sql_type) = 0;      
 };
 
 class MySQLStatement : public Statement
@@ -143,27 +143,27 @@ public:
     
     virtual bool GetMoreResults() ;
     
-    virtual bool SetBoolean(uint32_t param_idx, bool value) ;
+    virtual bool SetBoolean(int idx, bool value) ;
     
-    virtual bool SetInt(uint32_t param_idx, int32_t value) ;
+    virtual bool SetInt(int idx, int value) ;
     
-    virtual bool SetUInt(uint32_t param_idx, uint32_t value) ;
+    virtual bool SetUInt(int idx, unsigned int value) ;
     
-    virtual bool SetBigInt(uint32_t param_idx, int64_t value) ;
+    virtual bool SetBigInt(int idx, long value) ;
     
-    virtual bool SetInt64(uint32_t param_idx, int64_t value) ;
+    virtual bool SetInt64(int idx, long value) ;
     
-    virtual bool SetUInt64(uint32_t param_idx, uint64_t value) ;
+    virtual bool SetUInt64(int idx, unsigned long value) ;
     
-    virtual bool SetDouble(uint32_t param_idx, double value) ;
+    virtual bool SetDouble(int idx, double value) ;
     
-    virtual bool SetBlob(uint32_t param_idx, const char* blob, uint32_t length) ;
+    virtual bool SetBlob(int idx, const char* blob, unsigned int length) ;
     
-    virtual bool SetString(uint32_t param_idx, const char* value) ;
+    virtual bool SetString(int idx, const char* value) ;
     
-    virtual bool SetDateTime(uint32_t param_idx, const char* value) ;
+    virtual bool SetDateTime(int idx, const char* value) ;
 
-    virtual bool SetNull(uint32_t param_idx, int sql_type) ;    
+    virtual bool SetNull(int idx, int sql_type) ;    
     
     int GetErrNo();
     const char* GetError();
@@ -176,7 +176,7 @@ public:
     
     
 private:
-    bool SetParamToBuffer(uint32_t param_idx, enum_field_types type, const void* value, uint64_t size, bool is_unsigned) ;
+    bool SetParamToBuffer(int idx, enum_field_types type, const void* value, size_t size, bool is_unsigned) ;
     
 private:
     Connection* connection_;

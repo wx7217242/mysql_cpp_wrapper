@@ -15,7 +15,7 @@
 using namespace std;
 using namespace mysql;
 
-const char* host = "192.168.157.1";
+const char* host = "192.168.0.107";
 const char* user = "root";
 const char* passwd = "root";
 const char* database = "mysql_test";
@@ -46,7 +46,7 @@ void statement_resultset_test()
         do
         {
             conn  = new Connection(host, user, passwd, database, port);
-            if (!conn->Connect("utf8", 15, false))
+            if (!conn->Connect())
             {
                 printf("Connect error!\n");
                 break;
@@ -90,12 +90,12 @@ void statement_resultset_test()
             while (resultset->Next())
             {
                 int id = resultset->GetInt(0, 0);
-                uint32_t name_len = resultset->GetString(1, name, sizeof(name));
+                unsigned int name_len = resultset->GetString(1, name, sizeof(name));
                 bool sex = resultset->GetBoolean(2, false);
                 int age = resultset->GetInt(3, 10);
                 int64_t money = resultset->GetInt64(4, 100);
-                uint64_t diamond = resultset->GetUInt64(5, 100);
-                uint32_t ext_len = resultset->GetBlob(6, buffer, sizeof(buffer)); 
+                size_t diamond = resultset->GetUInt64(5, 100);
+                unsigned int ext_len = resultset->GetBlob(6, buffer, sizeof(buffer)); 
                 
                 std::cout << "id : " << id << std::endl;
                 std::cout << "name : " << name << "\t, length is " << name_len << std::endl;
@@ -152,7 +152,7 @@ void preparedstatement_resultset_test()
         do
         {
             conn  = new Connection(host, user, passwd, database, port);
-            if (!conn->Connect("utf8", 15, true))
+            if (!conn->Connect())
             {
                 printf("Connect error!\n");
                 break;
@@ -219,12 +219,12 @@ void preparedstatement_resultset_test()
                 memset(name, 0, sizeof(name));
                 memset(buffer, 0, sizeof(buffer));
                 int id = resultset->GetInt(0, 0);
-                uint32_t name_len = resultset->GetString(1, name, sizeof(name));
+                unsigned int name_len = resultset->GetString(1, name, sizeof(name));
                 bool sex = resultset->GetBoolean(2, false);
                 int age = resultset->GetInt(3, 10);
                 int64_t money = resultset->GetInt64(4, 100);
-                uint64_t diamond = resultset->GetUInt64(5, 100);
-                uint32_t ext_len = resultset->GetBlob(6, buffer, sizeof(buffer)); 
+                size_t diamond = resultset->GetUInt64(5, 100);
+                unsigned int ext_len = resultset->GetBlob(6, buffer, sizeof(buffer)); 
                 
                 std::cout << "id : " << id << std::endl;
                 std::cout << "name : " << name << "\t, length is " << name_len << std::endl;

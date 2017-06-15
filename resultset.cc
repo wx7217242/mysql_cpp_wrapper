@@ -76,14 +76,86 @@ const Statement* MySQLResultSet::GetStatement() const
     return stmt_;
 }
 
-uint32_t MySQLResultSet::GetBlob(uint32_t col_index, char* buffer, uint32_t max_buf_len) const
+int MySQLResultSet::GetBlob(int idx, char* buffer, unsigned int max_buf_len) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        uint32_t field_length = static_cast<uint32_t>(fields_length_[col_index]);
+        unsigned int field_length = static_cast<unsigned int>(fields_length_[idx]);
         if ( field_length <= max_buf_len)
         {
-            memcpy(buffer, cur_row_[col_index], field_length);
+            memcpy(buffer, cur_row_[idx], field_length);
+            return static_cast<int>(field_length);
+        }
+        else
+        {
+            fprintf(stderr, "buffer size less than data size!\n");
+        }
+    }
+    return 0;
+}
+
+bool MySQLResultSet::GetBoolean(int idx, bool def_val) const
+{
+    if (IsCurRowValid(idx))
+    {
+        return Convert(cur_row_[idx], def_val);
+    }
+    return def_val;
+}
+
+double MySQLResultSet::GetDouble(int idx, double def_val) const
+{
+    if (IsCurRowValid(idx))
+    {
+        return Convert(cur_row_[idx], def_val);
+    }
+    return def_val;
+}
+
+int MySQLResultSet::GetInt(int idx, int def_val) const
+{
+    if (IsCurRowValid(idx))
+    {
+        return Convert(cur_row_[idx], def_val);
+    }
+    return def_val;
+}
+
+unsigned int MySQLResultSet::GetUInt(int idx, unsigned int def_val) const
+{
+    if (IsCurRowValid(idx))
+    {
+        return Convert(cur_row_[idx], def_val);
+    }
+    return def_val;
+}
+
+long MySQLResultSet::GetInt64(int idx, long def_val) const
+{
+    if (IsCurRowValid(idx))
+    {
+        return Convert(cur_row_[idx], def_val);
+    }
+    return def_val;
+}
+
+unsigned long MySQLResultSet::GetUInt64(int idx, unsigned long def_val) const
+{
+    if (IsCurRowValid(idx))
+    {
+        return Convert(cur_row_[idx], def_val);
+    }
+    return def_val;
+}
+
+int MySQLResultSet::GetString(int idx, char* buffer, unsigned int max_buf_len) const
+{
+    if (IsCurRowValid(idx))
+    {
+        unsigned int field_length = static_cast<unsigned int>(fields_length_[idx]);
+        if ( field_length <= max_buf_len)
+        {
+            memcpy(buffer, cur_row_[idx], field_length);
             return field_length;
         }
         else
@@ -94,89 +166,17 @@ uint32_t MySQLResultSet::GetBlob(uint32_t col_index, char* buffer, uint32_t max_
     return 0;
 }
 
-bool MySQLResultSet::GetBoolean(uint32_t col_index, bool default_val) const
+std::string MySQLResultSet::GetString(int idx) const
 {
-    if (IsCurRowValid(col_index))
+    if (IsCurRowValid(idx))
     {
-        return Convert(cur_row_[col_index], default_val);
-    }
-    return default_val;
-}
-
-double MySQLResultSet::GetDouble(uint32_t col_index, double default_val) const
-{
-    if (IsCurRowValid(col_index))
-    {
-        return Convert(cur_row_[col_index], default_val);
-    }
-    return default_val;
-}
-
-int32_t MySQLResultSet::GetInt(uint32_t col_index, int32_t default_val) const
-{
-    if (IsCurRowValid(col_index))
-    {
-        return Convert(cur_row_[col_index], default_val);
-    }
-    return default_val;
-}
-
-uint32_t MySQLResultSet::GetUInt(uint32_t col_index, uint32_t default_val) const
-{
-    if (IsCurRowValid(col_index))
-    {
-        return Convert(cur_row_[col_index], default_val);
-    }
-    return default_val;
-}
-
-int64_t MySQLResultSet::GetInt64(uint32_t col_index, int64_t default_val) const
-{
-    if (IsCurRowValid(col_index))
-    {
-        return Convert(cur_row_[col_index], default_val);
-    }
-    return default_val;
-}
-
-uint64_t MySQLResultSet::GetUInt64(uint32_t col_index, uint64_t default_val) const
-{
-    if (IsCurRowValid(col_index))
-    {
-        return Convert(cur_row_[col_index], default_val);
-    }
-    return default_val;
-}
-
-uint32_t MySQLResultSet::GetString(uint32_t col_index, char* buffer, uint32_t max_buf_len) const
-{
-    if (IsCurRowValid(col_index))
-    {
-        uint32_t field_length = static_cast<uint32_t>(fields_length_[col_index]);
-        if ( field_length <= max_buf_len)
-        {
-            memcpy(buffer, cur_row_[col_index], field_length);
-            return field_length;
-        }
-        else
-        {
-            fprintf(stderr, "buffer size less than data size!\n");
-        }
-    }
-    return 0;
-}
-
-std::string MySQLResultSet::GetString(uint32_t col_index) const
-{
-    if (IsCurRowValid(col_index))
-    {
-        uint32_t field_length = static_cast<uint32_t>(fields_length_[col_index]);
-        return std::string(cur_row_[col_index], field_length);
+        unsigned int field_length = static_cast<unsigned int>(fields_length_[idx]);
+        return std::string(cur_row_[idx], field_length);
     }
     return "";
 }
 
-bool MySQLResultSet::IsNull(uint32_t col_index) const
+bool MySQLResultSet::IsNull(int idx) const
 {
     return false;
 }
@@ -200,9 +200,9 @@ bool MySQLResultSet::StoreResults()
     return true;
 }
 
-bool MySQLResultSet::IsCurRowValid(uint32_t idx) const
+bool MySQLResultSet::IsCurRowValid(int idx) const
 {
-    return idx < field_count_ && cur_row_[idx] != NULL;
+    return idx > 0 && idx < field_count_ && cur_row_[idx] != NULL;
 }
 
 
@@ -254,7 +254,7 @@ MySQLPreparedResultSet::~MySQLPreparedResultSet()
 bool MySQLPreparedResultSet::Next()
 {
     has_result = false;
-    for (uint32_t i = 0; i < field_count_; ++i)
+    for (unsigned int i = 0; i < field_count_; ++i)
 	{
 		MYSQL_BIND &data = results_[i];
 		memset(data.buffer, 0, data.buffer_length);
@@ -292,12 +292,12 @@ const Statement *MySQLPreparedResultSet::GetStatement() const
     return stmt_;
 }
 
-uint32_t MySQLPreparedResultSet::GetBlob(uint32_t col_index, char *buffer, uint32_t max_buf_len) const
+int MySQLPreparedResultSet::GetBlob(int idx, char *buffer, unsigned int max_buf_len) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        uint32_t buffer_length = static_cast<uint32_t>(fields_length_[col_index]); //data.buffer_length
-        const MYSQL_BIND& data = results_[col_index];
+        unsigned int buffer_length = static_cast<unsigned int>(fields_length_[idx]); //data.buffer_length
+        const MYSQL_BIND& data = results_[idx];
         if (max_buf_len < buffer_length)
         {
             memcpy(buffer, data.buffer, max_buf_len);
@@ -312,73 +312,73 @@ uint32_t MySQLPreparedResultSet::GetBlob(uint32_t col_index, char *buffer, uint3
     return 0;
 }
 
-bool MySQLPreparedResultSet::GetBoolean(uint32_t col_index, bool default_val) const
+bool MySQLPreparedResultSet::GetBoolean(int idx, bool def_val) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        const MYSQL_BIND& data = results_[col_index];
+        const MYSQL_BIND& data = results_[idx];
         char* buffer = reinterpret_cast<char*>(data.buffer);
         return *buffer == '1';
     }
-    return default_val;
+    return def_val;
 }
 
-double MySQLPreparedResultSet::GetDouble(uint32_t col_index, double default_val) const
+double MySQLPreparedResultSet::GetDouble(int idx, double def_val) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        const MYSQL_BIND& data = results_[col_index];
+        const MYSQL_BIND& data = results_[idx];
         return *reinterpret_cast<double*>(data.buffer);
     }
-    return default_val;
+    return def_val;
 }
 
-int32_t MySQLPreparedResultSet::GetInt(uint32_t col_index, int32_t default_val) const
+int MySQLPreparedResultSet::GetInt(int idx, int def_val) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        const MYSQL_BIND& data = results_[col_index];
+        const MYSQL_BIND& data = results_[idx];
         return *reinterpret_cast<int32_t*>(data.buffer);
     }
-    return default_val;
+    return def_val;
 }
 
-uint32_t MySQLPreparedResultSet::GetUInt(uint32_t col_index, uint32_t default_val) const
+unsigned int MySQLPreparedResultSet::GetUInt(int idx, unsigned int def_val) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        const MYSQL_BIND& data = results_[col_index];
-        return *reinterpret_cast<uint32_t*>(data.buffer);
+        const MYSQL_BIND& data = results_[idx];
+        return *reinterpret_cast<unsigned int*>(data.buffer);
     }
-    return default_val;
+    return def_val;
 }
 
-int64_t MySQLPreparedResultSet::GetInt64(uint32_t col_index, int64_t default_val) const
+long MySQLPreparedResultSet::GetInt64(int idx, long def_val) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        const MYSQL_BIND& data = results_[col_index];
+        const MYSQL_BIND& data = results_[idx];
         return *reinterpret_cast<int64_t*>(data.buffer);
     }
-    return default_val;
+    return def_val;
 }
 
-uint64_t MySQLPreparedResultSet::GetUInt64(uint32_t col_index, uint64_t default_val) const
+unsigned long MySQLPreparedResultSet::GetUInt64(int idx, unsigned long def_val) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        const MYSQL_BIND& data = results_[col_index];
-        return *reinterpret_cast<uint64_t*>(data.buffer);
+        const MYSQL_BIND& data = results_[idx];
+        return *reinterpret_cast<size_t*>(data.buffer);
     }
-    return default_val;
+    return def_val;
 }
 
-uint32_t MySQLPreparedResultSet::GetString(uint32_t col_index, char *buffer, uint32_t max_buf_len) const
+int MySQLPreparedResultSet::GetString(int idx, char *buffer, unsigned int max_buf_len) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        uint32_t buffer_length = static_cast<uint32_t>(fields_length_[col_index]); //data.buffer_length
-        const MYSQL_BIND& data = results_[col_index];
+        unsigned int buffer_length = static_cast<unsigned int>(fields_length_[idx]); //data.buffer_length
+        const MYSQL_BIND& data = results_[idx];
         if (max_buf_len < buffer_length)
         {
             memcpy(buffer, data.buffer, max_buf_len);
@@ -393,22 +393,22 @@ uint32_t MySQLPreparedResultSet::GetString(uint32_t col_index, char *buffer, uin
     return 0;
 }
 
-std::string MySQLPreparedResultSet::GetString(uint32_t col_index) const
+std::string MySQLPreparedResultSet::GetString(int idx) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        uint32_t buffer_length = static_cast<uint32_t>(fields_length_[col_index]); //data.buffer_length
-        const MYSQL_BIND& data = results_[col_index];
+        unsigned int buffer_length = static_cast<unsigned int>(fields_length_[idx]); //data.buffer_length
+        const MYSQL_BIND& data = results_[idx];
         return std::string(static_cast<char*>(data.buffer), buffer_length);
     }
     return "";
 }
 
-bool MySQLPreparedResultSet::IsNull(uint32_t col_index) const
+bool MySQLPreparedResultSet::IsNull(int idx) const
 {
-    if (col_index < field_count_)
+    if (IsCurRowValid(idx))
     {
-        const MYSQL_BIND& data = results_[col_index];
+        const MYSQL_BIND& data = results_[idx];
         if (data.is_null)
             return true;
         else
@@ -458,7 +458,7 @@ bool MySQLPreparedResultSet::BindResults()
             }
         }
         
-        for (uint32_t i = 0; i < field_count_; ++i)
+        for (unsigned int i = 0; i < field_count_; ++i)
         {
             MYSQL_BIND &data = results_[i];
             data.buffer_type = mysql_fields[i].type;
@@ -500,6 +500,15 @@ bool MySQLPreparedResultSet::BindResults()
         fprintf(stderr, "%s\n", stmt_->GetError());
         return false;
     }
+}
+
+bool MySQLPreparedResultSet::IsCurRowValid(int idx) const
+{
+    if (idx > 0 && static_cast<unsigned int>(idx) < field_count_)
+    {
+        return true;
+    }
+    return false;
 }
 
 bool MySQLPreparedResultSet::Init()

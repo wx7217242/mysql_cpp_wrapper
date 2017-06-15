@@ -14,39 +14,27 @@ Connection::Connection(const char *host,
                          const char *password, 
                          const char *database, 
                          unsigned int port, 
-                         uint32_t param_buf_size, 
-                         uint32_t result_buf_size)
-: connected_(false),
+                         unsigned int param_buf_size)
+: conf_(),
+  connected_(false),
   ping_counter_(0),
   param_buffer_(param_buf_size),
-  result_buffer_(result_buf_size)
+  result_buffer_(kDefaultResultBufferSize)
 {
-    conf_.autocommit = true;
-    conf_.charset = "utf8";
+    if (host != NULL)
+        conf_.host = host;
     
+    if (user != NULL)
+        conf_.user = user;
     
-    
-    /*
-    std::string host;
-    unsigned int port;
-    std::string user;
-    std::string password;
-    std::string database;
-    std::string charset;
-    int timeout;
-    int flag;
-    bool autocommit;
-    uint32_t param_buf_size;
-    uint32_t result_buf_size;
-*/
-    if (database != NULL)
-    {
-        conf_.database = database;
-    }
     if (password != NULL)
-    {
         conf_.password = password;
-    }
+    
+    if (database != NULL)
+        conf_.database = database;
+    
+    conf_.port = port;
+    conf_.param_buf_size = param_buf_size;
     
     if (mysql_init(&mysql_) == NULL)
     {
@@ -88,7 +76,9 @@ bool Connection::Connect()
                            conf_.password.c_str(), 
                            conf_.database.c_str(), 
                            conf_.port, 
-                           NULL, CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS | conf_.flag) != NULL)
+                           NULL, 
+                           CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS | conf_.flag) 
+            != NULL)
     {
         connected_ = true;
         mysql_autocommit(&mysql_, conf_.autocommit);

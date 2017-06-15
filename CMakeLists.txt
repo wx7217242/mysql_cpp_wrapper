@@ -46,7 +46,7 @@ resultset.cc
 )
 
 add_library(mysqlcppconn ${MYSQL_CPP_CONN_SRCS})
-target_link_libraries(mysqlcppconn mysqlclient rt)
+target_link_libraries(mysqlcppconn /usr/lib64/mysql/libmysqlclient.so rt)
 
 install(TARGETS mysqlcppconn DESTINATION lib)
 file(GLOB HEADERS "*.h")

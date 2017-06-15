@@ -9,8 +9,6 @@
 namespace mysql 
 {
 
-
-
 class Statement;
 class MySQLStatement;
 class MySQLPreparedStatement;
@@ -26,29 +24,29 @@ public:
       
       virtual const Statement* GetStatement() const = 0;
       
-      virtual uint32_t GetBlob(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const = 0;
-      
-      virtual bool GetBoolean(uint32_t col_index, bool default_val) const = 0;
-      
-      virtual double GetDouble(uint32_t col_index, double default_val) const = 0;
-      
-      virtual int32_t GetInt(uint32_t col_index, int default_val) const = 0;
-      
-      virtual uint32_t GetUInt(uint32_t col_index, uint32_t default_val) const = 0;
-      
-      virtual int64_t GetInt64(uint32_t col_index, int64_t default_val) const = 0;
-      
-      virtual uint64_t GetUInt64(uint32_t col_index, uint64_t default_val) const = 0;
-      
-      virtual uint32_t GetString(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const = 0;
+    virtual int GetBlob(int idx, char* buffer, unsigned int max_buf_len)  const = 0;
     
-      virtual std::string GetString(uint32_t col_index)  const = 0;
-      
-      virtual bool IsNull(uint32_t col_index) const = 0;
+    virtual bool GetBoolean(int idx, bool def_val) const = 0;
+    
+    virtual double GetDouble(int idx, double def_val) const = 0;
+    
+    virtual int GetInt(int idx, int def_val)  const = 0;
+    
+    virtual unsigned int GetUInt(int idx, unsigned int def_val) const = 0;
+    
+    virtual long GetInt64(int idx, long def_val) const = 0;
+    
+    virtual unsigned long GetUInt64(int idx, unsigned long def_val) const = 0;
+    
+    virtual int GetString(int idx, char* buffer, unsigned int max_buf_len)  const = 0;
+    
+    virtual std::string GetString(int idx)  const = 0;
+    
+    virtual bool IsNull(int idx) const = 0;
       
       //          virtual void clearWarnings() = 0;
       //          virtual void close() = 0;
-      //          virtual uint32_t FindColumn(const std::string& col_label) const = 0;
+      //          virtual unsigned int FindColumn(const std::string& col_label) const = 0;
 //          virtual int getConcurrency() = 0;
 //          virtual SQLString getCursorName() = 0;
 //          virtual int getFetchDirection() = 0;
@@ -56,7 +54,7 @@ public:
 //          virtual int getHoldability() = 0;
 //          virtual ResultSetMetaData * getMetaData() const = 0;
 //          virtual size_t getRow() const = 0;
-//          virtual RowID * getRowId(uint32_t columnIndex) = 0;
+//          virtual RowID * getRowId(unsigned int columnIndex) = 0;
 //          virtual RowID * getRowId(const sql::SQLString & columnLabel) = 0;
       
 
@@ -117,29 +115,29 @@ public:
     
     virtual const Statement* GetStatement() const;
     
-    virtual uint32_t GetBlob(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const;
+    virtual int GetBlob(int idx, char* buffer, unsigned int max_buf_len)  const;
     
-    virtual bool GetBoolean(uint32_t col_index, bool default_val) const;
+    virtual bool GetBoolean(int idx, bool def_val) const;
     
-    virtual double GetDouble(uint32_t col_index, double default_val) const;
+    virtual double GetDouble(int idx, double def_val) const;
     
-    virtual int32_t GetInt(uint32_t col_index, int32_t default_val)  const;
+    virtual int GetInt(int idx, int def_val)  const;
     
-    virtual uint32_t GetUInt(uint32_t col_index, uint32_t default_val) const;
+    virtual unsigned int GetUInt(int idx, unsigned int def_val) const;
     
-    virtual int64_t GetInt64(uint32_t col_index, int64_t default_val) const;
+    virtual long GetInt64(int idx, long def_val) const;
     
-    virtual uint64_t GetUInt64(uint32_t col_index, uint64_t default_val) const;
+    virtual unsigned long GetUInt64(int idx, unsigned long def_val) const;
     
-    virtual uint32_t GetString(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const;
+    virtual int GetString(int idx, char* buffer, unsigned int max_buf_len)  const;
     
-    virtual std::string GetString(uint32_t col_index)  const;
+    virtual std::string GetString(int idx)  const;
     
-    virtual bool IsNull(uint32_t col_index) const;
+    virtual bool IsNull(int idx) const;
     
 private:
     bool StoreResults();
-    bool IsCurRowValid(uint32_t idx) const;
+    bool IsCurRowValid(int idx) const;
     
 private:
     MySQLStatement* stmt_;
@@ -148,10 +146,10 @@ private:
     MYSQL_RES	* mysql_res_;
     MYSQL_ROW cur_row_;
     MYSQL_FIELD* mysql_fields;
-    uint32_t field_count_;
-    uint64_t rows_;
+    unsigned int field_count_;
+    size_t rows_;
     bool	has_result;
-    uint64_t* fields_length_;
+    size_t* fields_length_;
 };
 
 class MySQLPreparedResultSet : public ResultSet
@@ -166,25 +164,25 @@ public:
     
     virtual const Statement* GetStatement() const;
     
-    virtual uint32_t GetBlob(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const;
+    virtual int GetBlob(int idx, char* buffer, unsigned int max_buf_len)  const;
     
-    virtual bool GetBoolean(uint32_t col_index, bool default_val) const;
+    virtual bool GetBoolean(int idx, bool def_val) const;
     
-    virtual double GetDouble(uint32_t col_index, double default_val) const;
+    virtual double GetDouble(int idx, double def_val) const;
     
-    virtual int32_t GetInt(uint32_t col_index, int32_t default_val)  const;
+    virtual int GetInt(int idx, int def_val)  const;
     
-    virtual uint32_t GetUInt(uint32_t col_index, uint32_t default_val) const;
+    virtual unsigned int GetUInt(int idx, unsigned int def_val) const;
     
-    virtual int64_t GetInt64(uint32_t col_index, int64_t default_val) const;
+    virtual long GetInt64(int idx, long def_val) const;
     
-    virtual uint64_t GetUInt64(uint32_t col_index, uint64_t default_val) const;
+    virtual unsigned long GetUInt64(int idx, unsigned long def_val) const;
     
-    virtual uint32_t GetString(uint32_t col_index, char* buffer, uint32_t max_buf_len)  const;
+    virtual int GetString(int idx, char* buffer, unsigned int max_buf_len)  const;
     
-    virtual std::string GetString(uint32_t col_index)  const;
+    virtual std::string GetString(int idx)  const;
     
-    virtual bool IsNull(uint32_t col_index) const;
+    virtual bool IsNull(int idx) const;
     
     void set_mysql_metadata_res(MYSQL_RES* res);
     
@@ -192,6 +190,7 @@ public:
     
 private:
     bool BindResults();
+    bool IsCurRowValid(int idx) const;
     
 private:
     MySQLPreparedStatement* stmt_;
@@ -200,10 +199,10 @@ private:
     MYSQL_RES	* mysql_metadata_res_;
     MYSQL_ROW cur_row_;
     MYSQL_FIELD* mysql_fields;
-    uint32_t field_count_;
-    uint64_t rows_;
+    unsigned int field_count_;
+    size_t rows_;
     bool	has_result;
-    std::vector<uint64_t> fields_length_;
+    std::vector<size_t> fields_length_;
     
     MySQLBuffer* result_buffer_;
 };
