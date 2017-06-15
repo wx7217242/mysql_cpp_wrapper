@@ -1,7 +1,5 @@
-#include "mysql_connection.h"
-#include "mysql_statement.h"
-#include "mysql_prepared_statement.h"
-#include "mysql_exception.h"
+#include "connection.h"
+#include "statement.h"
 
 #include <iostream>
 #include <string.h>
@@ -9,15 +7,16 @@
 #include <stdlib.h>
 #include <assert.h>
 
-MySQLConnection::MySQLConnection(const char *host, 
+using namespace mysql;
+
+Connection::Connection(const char *host, 
                                  const char *user, 
                                  const char *passwd, 
                                  const char *database, 
                                  short port, 
                                  uint32_t param_buf_size, 
                                  uint32_t result_buf_size)
-: Connection(host, user, passwd, database, port),
-  connected_(false),
+: connected_(false),
   host_(host),
   user_(user),
   passwd_(passwd),
@@ -36,12 +35,12 @@ MySQLConnection::MySQLConnection(const char *host,
     }
 }
 
-MySQLConnection::~MySQLConnection()
+Connection::~Connection()
 {
     Close();
 }
 
-bool MySQLConnection::Connect(const char *charset, unsigned int timeout, bool auto_commit)
+bool Connection::Connect(const char *charset, unsigned int timeout, bool auto_commit)
 {
     if (connected_)
         return false;
@@ -72,13 +71,13 @@ bool MySQLConnection::Connect(const char *charset, unsigned int timeout, bool au
     return connected_;
 }
 
-bool MySQLConnection::Reconnect()
+bool Connection::Reconnect()
 {
     Close();
     return Connect(charset_.c_str(), timeout_, auto_commit_);
 }
 
-bool MySQLConnection::IsConnected()
+bool Connection::IsConnected()
 {
     ++ping_counter_;
     ping_counter_  %=  1000;
@@ -94,7 +93,7 @@ bool MySQLConnection::IsConnected()
     return connected_;
 }
 
-Statement *MySQLConnection::CreateStatement()
+Statement *Connection::CreateStatement()
 {
     if (!connected_)
     {
@@ -104,7 +103,7 @@ Statement *MySQLConnection::CreateStatement()
     return new MySQLStatement(this);
 }
 
-PreparedStatement *MySQLConnection::PrepareStatement(const std::string &sql)
+PreparedStatement *Connection::PrepareStatement(const std::string &sql)
 {
     if (!connected_)
     {
@@ -123,13 +122,13 @@ PreparedStatement *MySQLConnection::PrepareStatement(const std::string &sql)
     return stmt;
 }
 
-void MySQLConnection::SetAutoCommit(bool auto_commit)
+void Connection::SetAutoCommit(bool auto_commit)
 {
     auto_commit_ = auto_commit;
     mysql_autocommit(&mysql_, auto_commit);
 }
 
-void MySQLConnection::Commit()
+void Connection::Commit()
 {
     if (mysql_commit(&mysql_) != 0)
     {
@@ -137,12 +136,12 @@ void MySQLConnection::Commit()
     }
 }
 
-bool MySQLConnection::GetAutoCommit()
+bool Connection::GetAutoCommit()
 {
     return auto_commit_;
 }
 
-void MySQLConnection::Close()
+void Connection::Close()
 {
     if (connected_)
     {
@@ -152,27 +151,27 @@ void MySQLConnection::Close()
     }
 }
 
-int MySQLConnection::GetErrNo()
+int Connection::GetErrNo()
 {
     return mysql_errno(&mysql_);
 }
 
-const char *MySQLConnection::GetError()
+const char *Connection::GetError()
 {
     return mysql_error(&mysql_);
 }
 
-MYSQL *MySQLConnection::GetMySQLHandler()
+MYSQL *Connection::GetMySQLHandler()
 {
     return &mysql_;
 }
 
-MySQLBuffer *MySQLConnection::param_buffer()
+MySQLBuffer *Connection::param_buffer()
 {
     return &param_buffer_;
 }
 
-MySQLBuffer *MySQLConnection::result_buffer()
+MySQLBuffer *Connection::result_buffer()
 {
     return &result_buffer_;
 }

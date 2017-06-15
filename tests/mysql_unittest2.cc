@@ -6,15 +6,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../mysql_connection.h"
-#include "../mysql_exception.h"
-#include "../mysql_prepared_statement.h"
-#include "../mysql_resultset.h"
-#include "../mysql_statement.h"
+#include "../connection.h"
+#include "../resultset.h"
+#include "../statement.h"
 
 
 #include <iostream>
 using namespace std;
+using namespace mysql;
 
 const char* host = "192.168.157.1";
 const char* user = "root";
@@ -33,7 +32,7 @@ int main()
     {
         do
         {
-            conn = new MySQLConnection(host, user, passwd, database, port);
+            conn = new Connection(host, user, passwd, database, port);
             if (conn == NULL)
             {
                 break;

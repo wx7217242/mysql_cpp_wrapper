@@ -40,12 +40,9 @@ message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_T
 
 
 set(MYSQL_CPP_CONN_SRCS
-mysql_buffer.cc
-mysql_connection.cc
-mysql_prepared_statement.cc
-mysql_ps_resultset.cc
-mysql_resultset.cc
-mysql_statement.cc
+connection.cc
+statement.cc
+resultset.cc
 )
 
 add_library(mysqlcppconn ${MYSQL_CPP_CONN_SRCS})
