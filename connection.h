@@ -52,16 +52,19 @@ struct DBConf
            const char* u,
            const char* pw,
            const char* db,
-           const char* cs) :
+           const char* cs,
+           int t = 15,
+           int f = CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS,
+           bool a = true) : 
         host(PTR_OR_EMPTY(h)),
         port(p),
         user(PTR_OR_EMPTY(u)),
         password(PTR_OR_EMPTY(pw)),
         database(PTR_OR_EMPTY(db)),
         charset(PTR_OR_EMPTY(cs)),
-        timeout(),
-        flag(),
-        autocommit(),
+        timeout(t),
+        flag(f),
+        autocommit(a),
         param_buf_size(),
         result_buf_size()
     {
