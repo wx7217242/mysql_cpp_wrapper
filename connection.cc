@@ -10,24 +10,44 @@
 using namespace mysql;
 
 Connection::Connection(const char *host, 
-                                 const char *user, 
-                                 const char *passwd, 
-                                 const char *database, 
-                                 short port, 
-                                 uint32_t param_buf_size, 
-                                 uint32_t result_buf_size)
+                         const char *user, 
+                         const char *password, 
+                         const char *database, 
+                         unsigned int port, 
+                         uint32_t param_buf_size, 
+                         uint32_t result_buf_size)
 : connected_(false),
-  host_(host),
-  user_(user),
-  passwd_(passwd),
-  db_(database),
-  port_(port),
   ping_counter_(0),
-  timeout_(15),
-  auto_commit_(true),
   param_buffer_(param_buf_size),
   result_buffer_(result_buf_size)
 {
+    conf_.autocommit = true;
+    conf_.charset = "utf8";
+    
+    
+    
+    /*
+    std::string host;
+    unsigned int port;
+    std::string user;
+    std::string password;
+    std::string database;
+    std::string charset;
+    int timeout;
+    int flag;
+    bool autocommit;
+    uint32_t param_buf_size;
+    uint32_t result_buf_size;
+*/
+    if (database != NULL)
+    {
+        conf_.database = database;
+    }
+    if (password != NULL)
+    {
+        conf_.password = password;
+    }
+    
     if (mysql_init(&mysql_) == NULL)
     {
         fprintf(stderr, "mysql_init error!\n");
@@ -35,34 +55,43 @@ Connection::Connection(const char *host,
     }
 }
 
+Connection::Connection(DBConf &conf)
+: conf_(conf),
+  connected_(false),
+  ping_counter_(0),
+  param_buffer_(conf_.param_buf_size),
+  result_buffer_(conf_.result_buf_size)
+  
+{
+    
+}
+
 Connection::~Connection()
 {
     Close();
 }
 
-bool Connection::Connect(const char *charset, unsigned int timeout, bool auto_commit)
+bool Connection::Connect()
 {
     if (connected_)
         return false;
     
-    charset_ = charset;
-    timeout_ = timeout;
-    auto_commit_ = auto_commit;
+
     
-    mysql_set_character_set(&mysql_, charset);
-    mysql_options(&mysql_, MYSQL_OPT_READ_TIMEOUT, &timeout);
-    mysql_options(&mysql_, MYSQL_OPT_WRITE_TIMEOUT, &timeout);
+    mysql_set_character_set(&mysql_, conf_.charset.c_str());
+    mysql_options(&mysql_, MYSQL_OPT_READ_TIMEOUT, &conf_.timeout);
+    mysql_options(&mysql_, MYSQL_OPT_WRITE_TIMEOUT, &conf_.timeout);
         
     if (mysql_real_connect(&mysql_, 
-                           host_.c_str(), 
-                           user_.c_str(), 
-                           passwd_.c_str(), 
-                           db_.c_str(), 
-                           port_, 
-                           NULL, CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS) != NULL)
+                           conf_.host.c_str(), 
+                           conf_.user.c_str(), 
+                           conf_.password.c_str(), 
+                           conf_.database.c_str(), 
+                           conf_.port, 
+                           NULL, CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS | conf_.flag) != NULL)
     {
         connected_ = true;
-        mysql_autocommit(&mysql_, auto_commit_);
+        mysql_autocommit(&mysql_, conf_.autocommit);
     }
     else
     {
@@ -74,7 +103,7 @@ bool Connection::Connect(const char *charset, unsigned int timeout, bool auto_co
 bool Connection::Reconnect()
 {
     Close();
-    return Connect(charset_.c_str(), timeout_, auto_commit_);
+    return Connect();
 }
 
 bool Connection::IsConnected()
@@ -124,7 +153,7 @@ PreparedStatement *Connection::PrepareStatement(const std::string &sql)
 
 void Connection::SetAutoCommit(bool auto_commit)
 {
-    auto_commit_ = auto_commit;
+    conf_.autocommit = auto_commit;
     mysql_autocommit(&mysql_, auto_commit);
 }
 
@@ -138,7 +167,7 @@ void Connection::Commit()
 
 bool Connection::GetAutoCommit()
 {
-    return auto_commit_;
+    return conf_.autocommit;
 }
 
 void Connection::Close()

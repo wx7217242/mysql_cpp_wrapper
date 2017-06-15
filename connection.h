@@ -6,14 +6,11 @@
 #include <mysql/mysql.h>
 #include <stdexcept>
 
-namespace mysql {
-
-
+namespace mysql 
+{
 
 class Statement;
 class PreparedStatement;
-
-
 
 class MySQLException: public std::exception
 {
@@ -35,33 +32,72 @@ private:
     std::string reason_;
 };
 
+#define PTR_OR_EMPTY(ptr) (ptr != NULL ? ptr : "")
+
+struct DBConf
+{
+    std::string host;
+    unsigned int port;
+    std::string user;
+    std::string password;
+    std::string database;
+    std::string charset;
+    int timeout;
+    int flag;
+    bool autocommit;
+    uint32_t param_buf_size;
+    uint32_t result_buf_size;
+    DBConf(const char* h,
+           unsigned int p,
+           const char* u,
+           const char* pw,
+           const char* db,
+           const char* cs) :
+        host(PTR_OR_EMPTY(h)),
+        port(p),
+        user(PTR_OR_EMPTY(u)),
+        password(PTR_OR_EMPTY(pw)),
+        database(PTR_OR_EMPTY(db)),
+        charset(PTR_OR_EMPTY(cs)),
+        timeout(),
+        flag(),
+        autocommit(),
+        param_buf_size(),
+        result_buf_size()
+    {
+    }
+};
+
 class Connection
 {
 public:
     Connection(const char* host, 
-                    const char* user, 
-                    const char* passwd, 
-                    const char* database, 
-                    short port, 
-                    uint32_t param_buf_size = kDefaultParamBufferSize, 
-                    uint32_t result_buf_size = kDefaultResultBufferSize);
-    virtual ~Connection();
+               const char* user, 
+               const char* passwd, 
+               const char* database, 
+               unsigned int port, 
+               uint32_t param_buf_size = kDefaultParamBufferSize, 
+               uint32_t result_buf_size = kDefaultResultBufferSize);
+               
+    Connection(DBConf& conf);
     
-    virtual bool Connect(const char* charset, unsigned int timeout, bool auto_commit);
-    virtual bool Reconnect();
-    virtual bool IsConnected();
+    ~Connection();
     
-    virtual Statement* CreateStatement();
-    virtual PreparedStatement* PrepareStatement(const std::string& sql);
+    bool Connect();
+    bool Reconnect();
+    bool IsConnected();
     
-    virtual void SetAutoCommit(bool auto_commit);
-    virtual void Commit();
-    virtual bool GetAutoCommit();
+    Statement* CreateStatement();
+    PreparedStatement* PrepareStatement(const std::string& sql);
     
-    virtual void Close();
+    void SetAutoCommit(bool auto_commit);
+    void Commit();
+    bool GetAutoCommit();
     
-    virtual int GetErrNo();
-    virtual const char* GetError();
+    void Close();
+    
+    int GetErrNo();
+    const char* GetError();
     
     MYSQL* GetMySQLHandler();
     
@@ -71,20 +107,12 @@ public:
     
     
 private:
-    MYSQL mysql_;
-    bool connected_;
-    std::string host_;
-    std::string user_;
-    std::string passwd_;
-    std::string db_;
-    short port_;
-    int ping_counter_;
-    std::string charset_;
-    unsigned int timeout_;
-    bool auto_commit_;
-    
-    MySQLBuffer param_buffer_;
-    MySQLBuffer result_buffer_;
+    DBConf          conf_;
+    MYSQL           mysql_;
+    bool            connected_;
+    int             ping_counter_;
+    MySQLBuffer     param_buffer_;
+    MySQLBuffer     result_buffer_;
 };
 
 }
