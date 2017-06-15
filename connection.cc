@@ -10,16 +10,16 @@
 using namespace mysql;
 
 Connection::Connection(const char *host, 
-                         const char *user, 
-                         const char *password, 
-                         const char *database, 
-                         unsigned int port, 
-                         unsigned int param_buf_size)
-: conf_(),
-  connected_(false),
-  ping_counter_(0),
-  param_buffer_(param_buf_size),
-  result_buffer_(kDefaultResultBufferSize)
+                       const char *user, 
+                       const char *password, 
+                       const char *database, 
+                       unsigned int port, 
+                       unsigned int param_buf_size)
+    : conf_(),
+      connected_(false),
+      ping_counter_(0),
+      param_buffer_(param_buf_size),
+      result_buffer_(kDefaultResultBufferSize)
 {
     if (host != NULL)
         conf_.host = host;
@@ -44,12 +44,12 @@ Connection::Connection(const char *host,
 }
 
 Connection::Connection(DBConf &conf)
-: conf_(conf),
-  connected_(false),
-  ping_counter_(0),
-  param_buffer_(conf_.param_buf_size),
-  result_buffer_(conf_.result_buf_size)
-  
+    : conf_(conf),
+      connected_(false),
+      ping_counter_(0),
+      param_buffer_(conf_.param_buf_size),
+      result_buffer_(conf_.result_buf_size)
+    
 {
     
 }
@@ -64,12 +64,12 @@ bool Connection::Connect()
     if (connected_)
         return false;
     
-
+    
     
     mysql_set_character_set(&mysql_, conf_.charset.c_str());
     mysql_options(&mysql_, MYSQL_OPT_READ_TIMEOUT, &conf_.timeout);
     mysql_options(&mysql_, MYSQL_OPT_WRITE_TIMEOUT, &conf_.timeout);
-        
+    
     if (mysql_real_connect(&mysql_, 
                            conf_.host.c_str(), 
                            conf_.user.c_str(), 
@@ -102,12 +102,12 @@ bool Connection::IsConnected()
     ping_counter_  %=  1000;
     if (ping_counter_ == 0)
     {
-		int ping_code = mysql_ping(&mysql_);
+        int ping_code = mysql_ping(&mysql_);
         connected_ = ( ping_code == 0);
-		if (!connected_) 
-		{
-			fprintf(stderr, "mysql_ping:%d", ping_code);
-		}
+        if (!connected_) 
+        {
+            fprintf(stderr, "mysql_ping:%d", ping_code);
+        }
     }
     return connected_;
 }

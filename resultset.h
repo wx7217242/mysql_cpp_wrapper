@@ -16,14 +16,14 @@ class MySQLPreparedStatement;
 class ResultSet 
 {
 public:
-      virtual ~ResultSet() {}
-      
-      virtual bool Next() = 0;
+    virtual ~ResultSet() {}
     
-      virtual bool Init() = 0;
-      
-      virtual const Statement* GetStatement() const = 0;
-      
+    virtual bool Next() = 0;
+    
+    virtual bool Init() = 0;
+    
+    virtual const Statement* GetStatement() const = 0;
+    
     virtual int GetBlob(int idx, char* buffer, unsigned int max_buf_len)  const = 0;
     
     virtual bool GetBoolean(int idx, bool def_val) const = 0;
@@ -43,64 +43,64 @@ public:
     virtual std::string GetString(int idx)  const = 0;
     
     virtual bool IsNull(int idx) const = 0;
-      
-      //          virtual void clearWarnings() = 0;
-      //          virtual void close() = 0;
-      //          virtual unsigned int FindColumn(const std::string& col_label) const = 0;
-//          virtual int getConcurrency() = 0;
-//          virtual SQLString getCursorName() = 0;
-//          virtual int getFetchDirection() = 0;
-//          virtual size_t getFetchSize() = 0;
-//          virtual int getHoldability() = 0;
-//          virtual ResultSetMetaData * getMetaData() const = 0;
-//          virtual size_t getRow() const = 0;
-//          virtual RowID * getRowId(unsigned int columnIndex) = 0;
-//          virtual RowID * getRowId(const sql::SQLString & columnLabel) = 0;
-      
-
-      
-//          virtual enum_type getType() const = 0;
-      
-//          virtual void getWarnings() = 0;
-      
-//          virtual void insertRow() = 0;
-      
-//          virtual bool isAfterLast() const = 0;
-      
-//          virtual bool isBeforeFirst() const = 0;
-      
-//          virtual bool isClosed() const = 0;
-      
-//          virtual bool isFirst() const = 0;
-      
-//          virtual bool isLast() const = 0;
-      
-//          virtual bool last() = 0;
-      
-//          virtual bool next() = 0;
-      
-//          virtual void moveToCurrentRow() = 0;
-      
-//          virtual void moveToInsertRow() = 0;
-      
-//          virtual bool previous() = 0;
-      
-//          virtual void refreshRow() = 0;
-      
-//          virtual bool relative(int rows) = 0;
-      
-//          virtual bool rowDeleted() = 0;
-      
-//          virtual bool rowInserted() = 0;
-      
-//          virtual bool rowUpdated() = 0;
-      
-//          virtual void setFetchSize(size_t rows) = 0;
-      
-//          virtual size_t rowsCount() const = 0;
-      
-//          virtual bool wasNull() const = 0;
-
+    
+    //          virtual void clearWarnings() = 0;
+    //          virtual void close() = 0;
+    //          virtual unsigned int FindColumn(const std::string& col_label) const = 0;
+    //          virtual int getConcurrency() = 0;
+    //          virtual SQLString getCursorName() = 0;
+    //          virtual int getFetchDirection() = 0;
+    //          virtual size_t getFetchSize() = 0;
+    //          virtual int getHoldability() = 0;
+    //          virtual ResultSetMetaData * getMetaData() const = 0;
+    //          virtual size_t getRow() const = 0;
+    //          virtual RowID * getRowId(unsigned int columnIndex) = 0;
+    //          virtual RowID * getRowId(const sql::SQLString & columnLabel) = 0;
+    
+    
+    
+    //          virtual enum_type getType() const = 0;
+    
+    //          virtual void getWarnings() = 0;
+    
+    //          virtual void insertRow() = 0;
+    
+    //          virtual bool isAfterLast() const = 0;
+    
+    //          virtual bool isBeforeFirst() const = 0;
+    
+    //          virtual bool isClosed() const = 0;
+    
+    //          virtual bool isFirst() const = 0;
+    
+    //          virtual bool isLast() const = 0;
+    
+    //          virtual bool last() = 0;
+    
+    //          virtual bool next() = 0;
+    
+    //          virtual void moveToCurrentRow() = 0;
+    
+    //          virtual void moveToInsertRow() = 0;
+    
+    //          virtual bool previous() = 0;
+    
+    //          virtual void refreshRow() = 0;
+    
+    //          virtual bool relative(int rows) = 0;
+    
+    //          virtual bool rowDeleted() = 0;
+    
+    //          virtual bool rowInserted() = 0;
+    
+    //          virtual bool rowUpdated() = 0;
+    
+    //          virtual void setFetchSize(size_t rows) = 0;
+    
+    //          virtual size_t rowsCount() const = 0;
+    
+    //          virtual bool wasNull() const = 0;
+    
 };
 
 class MySQLResultSet : public ResultSet

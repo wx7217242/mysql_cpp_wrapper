@@ -69,7 +69,7 @@ public:
                const char* database, 
                unsigned int port, 
                unsigned int param_buf_size = kDefaultParamBufferSize);
-               
+    
     Connection(DBConf& conf);
     
     ~Connection();

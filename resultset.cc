@@ -257,10 +257,10 @@ bool MySQLPreparedResultSet::Next()
 {
     has_result = false;
     for (unsigned int i = 0; i < field_count_; ++i)
-	{
-		MYSQL_BIND &data = results_[i];
-		memset(data.buffer, 0, data.buffer_length);
-	}
+    {
+        MYSQL_BIND &data = results_[i];
+        memset(data.buffer, 0, data.buffer_length);
+    }
     
     if (stmt_ == NULL)
     {
@@ -278,10 +278,10 @@ bool MySQLPreparedResultSet::Next()
         fprintf(stderr, "%s\n", stmt_->GetError());
         break;
     case MYSQL_NO_DATA: // 不存在行／数据
-//        fprintf(stderr, "不存在行／数据\n");
+        //        fprintf(stderr, "不存在行／数据\n");
         break;
     case MYSQL_DATA_TRUNCATED: // 出现数据截短
-//        fprintf(stderr, "出现数据截短\n");
+        //        fprintf(stderr, "出现数据截短\n");
         break;
     default:
         break;

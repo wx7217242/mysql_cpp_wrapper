@@ -350,13 +350,13 @@ bool MySQLPreparedStatement::Init()
     if (mysql_stmt_ == NULL)
     {
         return false;
-//        throw MySQLException(GetError());
+        //        throw MySQLException(GetError());
     }    
     
     if (mysql_stmt_prepare(mysql_stmt_, sql_.c_str(), sql_.length()) != 0)
     {
         return false;
-//        throw MySQLException(GetError());
+        //        throw MySQLException(GetError());
     }
     
     param_count_ = mysql_stmt_param_count(mysql_stmt_);
