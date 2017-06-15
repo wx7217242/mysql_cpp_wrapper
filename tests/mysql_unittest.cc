@@ -11,12 +11,13 @@
 #include "../mysql_prepared_statement.h"
 #include "../mysql_resultset.h"
 #include "../mysql_statement.h"
+#include "../mysql_connection_pool.h"
 
 
 #include <iostream>
 using namespace std;
 
-const char* host = "192.168.157.1";
+const char* host = "192.168.0.107";
 const char* user = "root";
 const char* passwd = "root";
 const char* database = "mysql_test";
@@ -39,19 +40,22 @@ short port = 3306;
 
 void statement_resultset_test()
 {
-    Connection* conn = NULL;
+    MySQLConnection* conn = NULL;
     Statement* stmt = NULL;
     ResultSet* resultset = NULL;
     try
     {
         do
         {
-            conn  = new MySQLConnection(host, user, passwd, database, port);
-            if (!conn->Connect("utf8", 15, false))
-            {
-                printf("Connect error!\n");
-                break;
-            }
+             MySQLConnectionPool::GetInstance().InitConnectionPool(host,
+                                                                   port, user, passwd, database, 2, 1 );
+            conn = MySQLConnectionPool::GetInstance().GetConnection();
+//            conn  = new MySQLConnection(host, user, passwd, database, port);
+//            if (!conn->Connect("utf8", 15, false))
+//            {
+//                printf("Connect error!\n");
+//                break;
+//            }
             
             if (!conn->IsConnected())
             {
@@ -139,8 +143,10 @@ void statement_resultset_test()
     if (stmt != NULL)
         delete stmt;
     
-    if (conn != NULL)
-        delete conn;
+//    if (conn != NULL)
+//        delete conn;
+    
+    MySQLConnectionPool::GetInstance().ReleaseConnection(conn);
 }
 
 void preparedstatement_resultset_test()
@@ -291,13 +297,15 @@ void preparedstatement_resultset_test()
     
     if (conn != NULL)
         delete conn;
+    
+//    MySQLConnectionPool::GetInstance().ReleaseConnection(conn);
             
 }
 
 int main()
 {
-//    statement_resultset_test();
-    preparedstatement_resultset_test();
+    statement_resultset_test();
+//    preparedstatement_resultset_test();
     
     return 0;
 }

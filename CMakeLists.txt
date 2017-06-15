@@ -40,16 +40,16 @@ message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_T
 
 
 set(MYSQL_CPP_CONN_SRCS
-mysql_buffer.cc
 mysql_connection.cc
 mysql_prepared_statement.cc
 mysql_ps_resultset.cc
 mysql_resultset.cc
 mysql_statement.cc
+mysql_connection_pool.cc
 )
 
 add_library(mysqlcppconn ${MYSQL_CPP_CONN_SRCS})
-target_link_libraries(mysqlcppconn mysqlclient rt)
+target_link_libraries(mysqlcppconn /usr/lib64/mysql/libmysqlclient.a pthread rt dl)
 
 install(TARGETS mysqlcppconn DESTINATION lib)
 file(GLOB HEADERS "*.h")
