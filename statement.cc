@@ -310,17 +310,16 @@ MYSQL_STMT *MySQLPreparedStatement::GetMySQLStmtHandler() const
 
 bool MySQLPreparedStatement::SetParamToBuffer(int idx, enum_field_types type, const void *value, size_t size, bool is_unsigned)
 {
-    if (idx > 0 && 
-            static_cast<unsigned long>(idx) < param_count_ 
-            && param_buffer_->IsCapacityAvailable(size))
+    unsigned long tmp_idx = static_cast<unsigned long>(idx);
+    if (idx >= 0 && tmp_idx < param_count_ && param_buffer_->IsCapacityAvailable(size))
     {
-        if (cur_param_idx_ != static_cast<unsigned long>(idx))
+        if (cur_param_idx_ != tmp_idx)
         {
             fprintf(stderr, "param index error!\n");
             return false;
         }
         
-        MYSQL_BIND& data = params_[idx];	
+        MYSQL_BIND& data = params_[tmp_idx];	
         memset(&data, 0, sizeof(data));
         
         data.buffer_type = type;

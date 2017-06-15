@@ -202,7 +202,9 @@ bool MySQLResultSet::StoreResults()
 
 bool MySQLResultSet::IsCurRowValid(int idx) const
 {
-    return idx > 0 && idx < field_count_ && cur_row_[idx] != NULL;
+    return idx > 0 
+            && static_cast<unsigned int>(idx) < field_count_ 
+            && cur_row_[idx] != NULL;
 }
 
 
