@@ -33,7 +33,6 @@ private:
     std::string reason_;
 };
 
-#define PTR_OR_EMPTY(ptr) (ptr != NULL ? ptr : "")
 
 struct DBConf
 {
@@ -50,7 +49,7 @@ struct DBConf
     unsigned int result_buf_size;
     
     DBConf() : 
-        port(3306), \
+        port(3306),
         charset("utf8"), 
         timeout(15), 
         flag(CLIENT_COMPRESS | CLIENT_MULTI_STATEMENTS), 

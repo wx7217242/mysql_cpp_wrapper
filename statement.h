@@ -16,8 +16,8 @@ class ResultSet;
 class Statement 
 {
 public:
-    Statement() {}
-    virtual ~Statement() {}
+    Statement();
+    virtual ~Statement();
     
     virtual Connection* GetConnection() = 0;
     
@@ -53,8 +53,8 @@ public:
 class PreparedStatement : public Statement
 {
 public:
-    PreparedStatement() {}
-    virtual ~PreparedStatement() {}      
+    PreparedStatement();
+    virtual ~PreparedStatement();      
     
     virtual bool Execute(const std::string& sql) = 0;
     virtual bool Execute() = 0;
@@ -112,10 +112,10 @@ public:
     unsigned long long GetLastInsertID();
     
 private:
-    Connection* connection_;
-    ResultSet* resultset_;
-    unsigned long long affected_rows_;
-    unsigned long long insert_id_; 
+    Connection*         connection_;
+    ResultSet*          resultset_;
+    unsigned long long  affected_rows_;
+    unsigned long long  insert_id_; 
 };
 
 
@@ -179,19 +179,16 @@ private:
     bool SetParamToBuffer(int idx, enum_field_types type, const void* value, size_t size, bool is_unsigned) ;
     
 private:
-    Connection* connection_;
-    std::string sql_;
-    ResultSet* resultset_;
-    unsigned long long insert_id_;
-    int affected_rows_;
-    
-    MYSQL_STMT* mysql_stmt_;
+    Connection*             connection_;
+    std::string             sql_;
+    ResultSet*              resultset_;
+    unsigned long long      insert_id_;
+    int                     affected_rows_;
+    MYSQL_STMT*             mysql_stmt_;
     std::vector<MYSQL_BIND> params_;
-    
-    unsigned long cur_param_idx_;
-    unsigned long param_count_;
-    
-    MySQLBuffer* param_buffer_;    
+    unsigned long           cur_param_idx_;
+    unsigned long           param_count_;
+    MySQLBuffer*            param_buffer_;    
 };
 
 }

@@ -16,7 +16,7 @@ class MySQLPreparedStatement;
 class ResultSet 
 {
 public:
-    virtual ~ResultSet() {}
+    virtual ~ResultSet();
     
     virtual bool Next() = 0;
     
@@ -140,16 +140,15 @@ private:
     bool IsCurRowValid(int idx) const;
     
 private:
-    MySQLStatement* stmt_;
-    
-    MYSQL_STMT* mysql_stmt_;
-    MYSQL_RES	* mysql_res_;
-    MYSQL_ROW cur_row_;
-    MYSQL_FIELD* mysql_fields;
-    unsigned int field_count_;
-    size_t rows_;
-    bool	has_result;
-    size_t* fields_length_;
+    MySQLStatement*     stmt_;
+    MYSQL_STMT*         mysql_stmt_;
+    MYSQL_RES*          mysql_res_;
+    MYSQL_ROW           cur_row_;
+    MYSQL_FIELD*        mysql_fields;
+    unsigned int        field_count_;
+    size_t              rows_;
+    bool                has_result;
+    size_t*             fields_length_;
 };
 
 class MySQLPreparedResultSet : public ResultSet
@@ -193,18 +192,16 @@ private:
     bool IsCurRowValid(int idx) const;
     
 private:
-    MySQLPreparedStatement* stmt_;
-    
-    std::vector<MYSQL_BIND> results_;
-    MYSQL_RES	* mysql_metadata_res_;
-    MYSQL_ROW cur_row_;
-    MYSQL_FIELD* mysql_fields;
-    unsigned int field_count_;
-    size_t rows_;
-    bool	has_result;
-    std::vector<size_t> fields_length_;
-    
-    MySQLBuffer* result_buffer_;
+    MySQLPreparedStatement*     stmt_;
+    std::vector<MYSQL_BIND>     results_;
+    MYSQL_RES*                  mysql_metadata_res_;
+    MYSQL_ROW                   cur_row_;
+    MYSQL_FIELD*                mysql_fields;
+    unsigned int                field_count_;
+    size_t                      rows_;
+    bool                        has_result;
+    std::vector<size_t>         fields_length_;
+    MySQLBuffer*                result_buffer_;
 };
 
 }

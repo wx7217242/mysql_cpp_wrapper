@@ -8,6 +8,14 @@
 
 using namespace mysql;
 
+Statement::Statement() {}
+
+Statement::~Statement() {}
+
+PreparedStatement::PreparedStatement() {}
+
+PreparedStatement::~PreparedStatement() {}
+
 MySQLStatement::MySQLStatement(Connection* conn) : Statement(),
     connection_(conn),
     resultset_(NULL),
@@ -364,3 +372,6 @@ bool MySQLPreparedStatement::Init()
     
     return true;
 }
+
+
+

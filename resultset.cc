@@ -12,19 +12,9 @@
 
 using namespace mysql;
 
-template <typename T>
-T Convert(const char* p, T default_val)
+ResultSet::~ResultSet()
 {
-    T res = default_val;
     
-    if (p != NULL)
-    {
-        static std::stringstream ss;
-        ss.clear();
-        ss << p;
-        ss >> res;
-    }
-    return  res;
 }
 
 MySQLResultSet::MySQLResultSet(MySQLStatement *stmt) :
@@ -98,7 +88,9 @@ bool MySQLResultSet::GetBoolean(int idx, bool def_val) const
 {
     if (IsCurRowValid(idx))
     {
-        return Convert(cur_row_[idx], def_val);
+        int res = def_val;
+        sscanf(cur_row_[idx], "%d", &res);
+        return res;
     }
     return def_val;
 }
@@ -107,7 +99,9 @@ double MySQLResultSet::GetDouble(int idx, double def_val) const
 {
     if (IsCurRowValid(idx))
     {
-        return Convert(cur_row_[idx], def_val);
+        double res = def_val;
+        sscanf(cur_row_[idx], "%lf", &res);
+        return res;
     }
     return def_val;
 }
@@ -116,7 +110,9 @@ int MySQLResultSet::GetInt(int idx, int def_val) const
 {
     if (IsCurRowValid(idx))
     {
-        return Convert(cur_row_[idx], def_val);
+        int res = def_val;
+        sscanf(cur_row_[idx], "%d", &res);
+        return res;
     }
     return def_val;
 }
@@ -125,7 +121,9 @@ unsigned int MySQLResultSet::GetUInt(int idx, unsigned int def_val) const
 {
     if (IsCurRowValid(idx))
     {
-        return Convert(cur_row_[idx], def_val);
+        unsigned int res = def_val;
+        sscanf(cur_row_[idx], "%ud", &res);
+        return res;
     }
     return def_val;
 }
@@ -134,7 +132,9 @@ long MySQLResultSet::GetInt64(int idx, long def_val) const
 {
     if (IsCurRowValid(idx))
     {
-        return Convert(cur_row_[idx], def_val);
+        long res = def_val;
+        sscanf(cur_row_[idx], "%ld", &res);
+        return res;
     }
     return def_val;
 }
@@ -143,7 +143,9 @@ unsigned long MySQLResultSet::GetUInt64(int idx, unsigned long def_val) const
 {
     if (IsCurRowValid(idx))
     {
-        return Convert(cur_row_[idx], def_val);
+        unsigned long res = def_val;
+        sscanf(cur_row_[idx], "%lud", &res);
+        return res;
     }
     return def_val;
 }
@@ -152,11 +154,10 @@ int MySQLResultSet::GetString(int idx, char* buffer, unsigned int max_buf_len) c
 {
     if (IsCurRowValid(idx))
     {
-        unsigned int field_length = static_cast<unsigned int>(fields_length_[idx]);
-        if ( field_length <= max_buf_len)
+        if (fields_length_[idx] <= max_buf_len)
         {
-            memcpy(buffer, cur_row_[idx], field_length);
-            return field_length;
+            memcpy(buffer, cur_row_[idx], fields_length_[idx]);
+            return static_cast<int>(fields_length_[idx]);
         }
         else
         {
@@ -178,12 +179,12 @@ std::string MySQLResultSet::GetString(int idx) const
 
 bool MySQLResultSet::IsNull(int idx) const
 {
-    return false;
+    return !IsCurRowValid(idx);
 }
 
 bool MySQLResultSet::StoreResults()
 {
-    Connection* connection = static_cast<Connection*>(stmt_->GetConnection());
+    Connection* connection = stmt_->GetConnection();
     if (connection == NULL)
         return false;
     
@@ -303,15 +304,15 @@ int MySQLPreparedResultSet::GetBlob(int idx, char *buffer, unsigned int max_buf_
         if (max_buf_len < buffer_length)
         {
             memcpy(buffer, data.buffer, max_buf_len);
-            return max_buf_len;
+            return static_cast<int>(max_buf_len);
         }
         else
         {
             memcpy(buffer, data.buffer, buffer_length);
-            return buffer_length;
+            return static_cast<int>(buffer_length);
         }
     }
-    return 0;
+    return -1;
 }
 
 bool MySQLPreparedResultSet::GetBoolean(int idx, bool def_val) const
@@ -384,15 +385,15 @@ int MySQLPreparedResultSet::GetString(int idx, char *buffer, unsigned int max_bu
         if (max_buf_len < buffer_length)
         {
             memcpy(buffer, data.buffer, max_buf_len);
-            return max_buf_len;
+            return static_cast<int>(max_buf_len);
         }
         else
         {
             memcpy(buffer, data.buffer, buffer_length);
-            return buffer_length;
+            return static_cast<int>(buffer_length);
         }
     }
-    return 0;
+    return -1;
 }
 
 std::string MySQLPreparedResultSet::GetString(int idx) const
@@ -529,4 +530,3 @@ bool MySQLPreparedResultSet::Init()
     }
     return true;
 }
-
