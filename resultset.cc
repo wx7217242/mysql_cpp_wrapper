@@ -182,6 +182,15 @@ bool MySQLResultSet::IsNull(int idx) const
     return !IsCurRowValid(idx);
 }
 
+size_t MySQLResultSet::RowsCount() const
+{
+    if (mysql_res_ != NULL)
+    {
+        return mysql_res_->row_count;
+    }
+    throw new MySQLException("mysql result set mysql_res_ is NULL");
+}
+
 bool MySQLResultSet::StoreResults()
 {
     Connection* connection = stmt_->GetConnection();
@@ -418,6 +427,15 @@ bool MySQLPreparedResultSet::IsNull(int idx) const
             return false;
     }
     return true;
+}
+
+size_t MySQLPreparedResultSet::RowsCount() const
+{
+    if (mysql_metadata_res_ != NULL)
+    {
+        return mysql_metadata_res_->row_count;
+    }
+    throw new MySQLException("mysql prepared result set mysql_metadata_res_ is NULL");
 }
 
 void MySQLPreparedResultSet::set_mysql_metadata_res(MYSQL_RES *res)

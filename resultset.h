@@ -44,6 +44,8 @@ public:
     
     virtual bool IsNull(int idx) const = 0;
     
+    virtual size_t RowsCount() const = 0;
+    
     //          virtual void clearWarnings() = 0;
     //          virtual void close() = 0;
     //          virtual unsigned int FindColumn(const std::string& col_label) const = 0;
@@ -135,6 +137,8 @@ public:
     
     virtual bool IsNull(int idx) const;
     
+    virtual size_t RowsCount() const;
+    
 private:
     bool StoreResults();
     bool IsCurRowValid(int idx) const;
@@ -182,6 +186,8 @@ public:
     virtual std::string GetString(int idx)  const;
     
     virtual bool IsNull(int idx) const;
+    
+    virtual size_t RowsCount() const;
     
     void set_mysql_metadata_res(MYSQL_RES* res);
     
