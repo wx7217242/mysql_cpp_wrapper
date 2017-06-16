@@ -41,6 +41,7 @@ message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_T
 
 set(MYSQL_CPP_CONN_SRCS
 connection.cc
+connection_pool.cc
 statement.cc
 resultset.cc
 )
