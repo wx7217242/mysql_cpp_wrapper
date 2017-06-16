@@ -19,7 +19,7 @@ Connection::Connection(const char *host,
       connected_(false),
       ping_counter_(0),
       param_buffer_(param_buf_size),
-      result_buffer_(kDefaultResultBufferSize)
+      result_buffer_(conf_.result_buf_size)
 {
     if (host != NULL)
         conf_.host = host;
