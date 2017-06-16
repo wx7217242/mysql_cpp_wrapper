@@ -2,8 +2,6 @@
 #define STATEMENT_H_
 
 #include <string>
-
-#include "types.h"
 #include <vector>
 #include <mysql/mysql.h>
 
@@ -12,6 +10,7 @@ namespace mysql
 
 class Connection;
 class ResultSet;
+class MySQLBuffer;
 
 class Statement 
 {

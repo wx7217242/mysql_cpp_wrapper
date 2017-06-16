@@ -1,6 +1,7 @@
 #include "statement.h"
 #include "connection.h"
 #include "resultset.h"
+
 #include <mysql/mysql.h>
 
 #include <stdio.h>

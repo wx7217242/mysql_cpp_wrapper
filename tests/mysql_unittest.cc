@@ -15,7 +15,7 @@
 using namespace std;
 using namespace mysql;
 
-const char* host = "192.168.0.107";
+const char* host = "192.168.157.1";
 const char* user = "root";
 const char* passwd = "root";
 const char* database = "mysql_test"; 

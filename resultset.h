@@ -1,7 +1,6 @@
 #ifndef RESULTSET_H_
 #define RESULTSET_H_
 
-#include "types.h"
 #include <istream>
 #include <vector>
 #include <mysql/mysql.h>
@@ -12,6 +11,7 @@ namespace mysql
 class Statement;
 class MySQLStatement;
 class MySQLPreparedStatement;
+class MySQLBuffer;
 
 class ResultSet 
 {
