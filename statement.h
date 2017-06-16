@@ -27,7 +27,7 @@ public:
     //      virtual void Close() = 0;
     
     virtual bool Execute(const std::string& sql) = 0;
-    virtual ResultSet * ExecuteQuery(const std::string& sql) = 0;
+    virtual ResultSet* ExecuteQuery(const std::string& sql) = 0;
     virtual ResultSet* GetResultSet() = 0;
     virtual int ExecuteUpdate(const std::string& sql) = 0;
     virtual bool GetMoreResults() = 0;
@@ -58,8 +58,8 @@ public:
     virtual bool Execute(const std::string& sql) = 0;
     virtual bool Execute() = 0;
     
-    virtual ResultSet * ExecuteQuery(const std::string& sql) = 0;
-    virtual ResultSet * ExecuteQuery() = 0;
+    virtual ResultSet* ExecuteQuery(const std::string& sql) = 0;
+    virtual ResultSet* ExecuteQuery() = 0;
     
     virtual int ExecuteUpdate(const std::string& sql) = 0;
     virtual int ExecuteUpdate() = 0;
@@ -134,8 +134,8 @@ public:
     virtual bool Execute(const std::string& sql) ;
     virtual bool Execute() ;
     
-    virtual ResultSet * ExecuteQuery(const std::string& sql) ;
-    virtual ResultSet * ExecuteQuery() ;
+    virtual ResultSet* ExecuteQuery(const std::string& sql) ;
+    virtual ResultSet* ExecuteQuery() ;
     
     virtual int ExecuteUpdate(const std::string& sql) ;
     virtual int ExecuteUpdate() ;
