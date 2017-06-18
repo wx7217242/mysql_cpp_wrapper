@@ -15,6 +15,9 @@ namespace mysql
 class Statement;
 class PreparedStatement;
 
+/**
+  * @brief MySQL操作的异常类
+*/
 class MySQLException: public std::exception
 {
 public:
@@ -35,15 +38,18 @@ private:
     std::string reason_;
 };
 
-const int kDefaultParamBufferSize = 1024; 
-const int kDefaultResultBufferSize = 10 * 1024; 
-const int kMaxBufferSize = 10 * 1024 * 1024;
+const size_t kDefaultParamBufferSize = 1024;           // 默认一条SQL的长度
+const size_t kDefaultResultBufferSize = 10 * 1024;     // 默认一条结果集的长度
+const size_t kMaxBufferSize = 10 * 1024 * 1024;        // 缓冲区的最大长度
 
+/**
+ * @brief MySQLBuffer 类，用于保存PreparedStatemt的参数和PreparedStatemtResult的结果
+*/
 class MySQLBuffer
 {
 public:
     MySQLBuffer(size_t size) : 
-        buffer_size_(size),
+        buffer_size_(std::min(size, kMaxBufferSize)),
         buffer_cur_pos_(0)
     {
         buffer_.resize(buffer_size_);
@@ -54,6 +60,10 @@ public:
         
     }
     
+    /**
+      * @brief 把参数追加到Buffer中，成功需要调用IncreaseBufferCurPos
+      * @return 成功返回true；失败返回false；
+    */
     bool Append(const void* param, size_t size)
     {
         if (buffer_cur_pos_ + size > buffer_size_)
@@ -63,25 +73,46 @@ public:
         return true;
     }
     
+    /**
+      * @brief 重置Buffer
+    */
     void ResetBuffer()
     {
         buffer_cur_pos_ = 0;
         buffer_.clear();
     }
     
+    /**
+      * @brief 获取Buffer的头指针
+    */
     char* buffer() { return buffer_.data(); }
     
+    /**
+      * @brief 获取Buffer的当前位置的指针
+    */
     char* buffer_from_current() { return buffer_.data() + buffer_cur_pos_; }
     
+    /**
+      * @brief 获取Buffer的大小
+    */
     size_t buffer_size() const { return buffer_size_; }
     
+    /**
+      * @brief 获取Buffer的当前位置
+    */
     size_t buffer_cur_pos() const { return buffer_cur_pos_; }
     
+    /**
+      * @brief 判断Buffer的容量时候足够
+    */
     bool IsCapacityAvailable(size_t size) const
     {
         return buffer_cur_pos_ + size <= buffer_size_;
     }
     
+    /**
+      * @brief 移动Buffer的当前位置
+    */
     bool IncreaseBufferCurPos(size_t offset)
     {
         if (IsCapacityAvailable(offset))
@@ -93,6 +124,9 @@ public:
         return false;
     }
     
+    /**
+      * @brief 扩展Buffer的容量，默认是当前容量的两倍；最大不超过 kMaxBufferSize
+    */
     bool ExtendBuffer()
     {
         if (buffer_size_ + (buffer_size_ << 1) >= kMaxBufferSize)
@@ -137,6 +171,12 @@ struct DBConf
     {}
 };
 
+/**
+ * @brief 数据库连接类，一个线程一个Connection
+ * @brief 由此连接创建的PreparedStatement共享param_buffer_
+ * @brief 由此连接创建的PreparedStatementResultSet共享result_buffer_
+ * @brief 
+*/
 class Connection
 {
 public:

@@ -175,7 +175,11 @@ public:
     
     
 private:
-    bool AppendToParamBuffer(int idx, enum_field_types type, const void* value, size_t size, bool is_unsigned) ;
+    bool AppendToParamBuffer(int idx, 
+                             enum_field_types type, 
+                             const void* value, 
+                             size_t size, 
+                             bool is_unsigned) ;
     
 private:
     Connection*             connection_;

@@ -63,9 +63,7 @@ bool Connection::Connect()
 {
     if (connected_)
         return false;
-    
-    
-    
+
     mysql_set_character_set(&mysql_, conf_.charset.c_str());
     mysql_options(&mysql_, MYSQL_OPT_READ_TIMEOUT, &conf_.timeout);
     mysql_options(&mysql_, MYSQL_OPT_WRITE_TIMEOUT, &conf_.timeout);
@@ -172,7 +170,7 @@ void Connection::Close()
 
 int Connection::GetErrNo()
 {
-    return mysql_errno(&mysql_);
+    return static_cast<int>(mysql_errno(&mysql_));
 }
 
 const char *Connection::GetError()

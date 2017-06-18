@@ -317,7 +317,11 @@ MYSQL_STMT *MySQLPreparedStatement::GetMySQLStmtHandler() const
     return mysql_stmt_;
 }
 
-bool MySQLPreparedStatement::AppendToParamBuffer(int idx, enum_field_types type, const void *value, size_t size, bool is_unsigned)
+bool MySQLPreparedStatement::AppendToParamBuffer(int idx, 
+                                                 enum_field_types type, 
+                                                 const void *value, 
+                                                 size_t size, 
+                                                 bool is_unsigned)
 {
     unsigned long tmp_idx = static_cast<unsigned long>(idx);
     if (idx >= 0 && tmp_idx < param_count_ && param_buffer_->IsCapacityAvailable(size))
