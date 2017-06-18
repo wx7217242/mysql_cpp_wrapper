@@ -54,7 +54,7 @@ public:
         
     }
     
-    bool SetParamToBuffer(const void* param, size_t size)
+    bool Append(const void* param, size_t size)
     {
         if (buffer_cur_pos_ + size > buffer_size_)
             return false;
